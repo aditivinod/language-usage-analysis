@@ -4,8 +4,15 @@
 example_dict = {"gamer":1, "gamers":2, "gaming":3, "the": 7, "potassium": 9, \
 "potassiums" : 9
 }
+#import nltk and WordNetLemmatizer for detecting plural words
+from nltk.stem import WordNetLemmatizer
 
-#non_useful_words = ["the","i","to","and","a","of","it","that","is","for","in"]
+wnl = WordNetLemmatizer()
+
+def isplural(word):
+    lemma = wnl.lemmatize(word, 'n')
+    plural = True if word is not lemma else False
+    return plural, lemma
 
 def depluralize(frequency_dictionary):
     """
@@ -21,26 +28,37 @@ def depluralize(frequency_dictionary):
     ignore_list = []
     for word in frequency_dictionary:
         
-        #if the word is a plural version of another word, then do not run the
-        #loop
-        if word in ignore_list:
+        plural, lemma = isplural(word)
+
+        #if the word is not plural, skip the loop
+        if plural is False:
+            ignore_list.append(word)
             continue
+
+        if lemma in frequency_dictionary:
+            not_plural_dict[lemma] = frequency_dictionary[lemma] \
+                + frequency_dictionary[word]
+            ignore_list.append(word)
     
-        for indexed_word in frequency_dictionary:
+    for word in ignore_list not in not_plural_dict:
+        not_plural_dict[word] = frequency_dictionary[word]
+
+        #for indexed_word in frequency_dictionary:
             #check if the indexed word is a plural version of the original word
-            if word + "s" == indexed_word or word + "es" == indexed_word or \
-                word + "en" == indexed_word or word + "'s" == indexed_word:
+           
+           
+        """ if word + "s" == indexed_word or word + "es" == indexed_word or \
+            word + "en" == indexed_word or word + "'s" == indexed_word:
 
-                not_plural_dict[word] = frequency_dictionary[indexed_word] \
-                    + frequency_dictionary[word]
+            not_plural_dict[word] = frequency_dictionary[indexed_word] \
+                + frequency_dictionary[word]
 
-                ignore_list.append(indexed_word)
-                break
+            ignore_list.append(indexed_word)
+            break"""
         
-        if word not in not_plural_dict:
-            not_plural_dict[word] = frequency_dictionary[word]
     
     return not_plural_dict
+print(depluralize(example_dict))
 
 def remove_most_common(normal_dictionary, gamer_dictionary):
     """
