@@ -35,9 +35,18 @@ def scrape_subreddits(subreddit_strings, num_posts):
     word_dict = (Counter(words))
     return word_dict
 
+def csv_to_dict(file_name):
+    with open(file_name) as csv_file:
+        reader = csv.reader(csv_file)
+        word_dict = {}
+        for key, value in reader:
+            word_dict[key] = int(value)
+    return word_dict
+
 def dict_to_csv(word_dict, file_name):
-    pd.DataFrame.from_dict(data=word_dict, orient='index') \
-        .to_csv('file_name', header=False)
+    with open(file_name, 'w') as f:
+        for key in word_dict.keys():
+            f.write("%s,%s\n" % (key, word_dict[key]))
    
 def scrape_user(username):
     #username = reddit.subreddit("r/u_" + username)
