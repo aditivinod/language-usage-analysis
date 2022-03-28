@@ -7,7 +7,8 @@ example_dict = {"gamer":1, "gamers":2, "gaming":3, "the": 7, "potassium": 9, \
 
 from operator import itemgetter
 import math
-
+import os
+from scrape_data import csv_to_dict
 
 def find_most_frequent(word_dictionary, number_items):
     """
@@ -221,4 +222,50 @@ def determine_language_similarity(word_dictionary, user_dictionary):
             difference_list.append(user_dictionary[word]**2)
     
     return math.sqrt(sum(difference_list))
+
+def analyze_users_language(normal_dictionary, gamer_dictionary, gamer_words, ignore_list, folder_path):
+    """
+    Analyze a user's language similarity to a dictionary
+    
+    Returns:
+        dictionary -> key is filepath,values is list [normal closeness val, gamer closeness val, ratio of gamer words used to all words]
+    """
+    file_list = os.listdir(folder_path)
+
+    file_list = [folder_path +"/" + user for user in file_list]
+
+    #print(file_list)
+
+    user_value_dict = {}
+    swap_list = []
+    for user in file_list:
+
+        swap_list = []
+        user_dictionary = csv_to_dict(user)
+        
+        #remove non useful user data
+        user_dictionary = remove_too_uncommon(user_dictionary,3)
+        user_dictionary = {word:value for (word,value) in user_dictionary.items() if word not in ignore_list}
+        user_dictionary = instances_to_decimal(user_dictionary)
+
+        #print(user_dictionary)
+        #print(type(user_dictionary))
+        swap_list.append(determine_language_similarity(normal_dictionary,user_dictionary))
+        swap_list.append(determine_language_similarity(gamer_dictionary,user_dictionary))
+        
+        #compute what ratio of words that a user uses are gamer words
+        ratio_gamer_words_used = 0
+        for word in gamer_words:
+            if word in user_dictionary.keys():
+                ratio_gamer_words_used += user_dictionary[word]
+        ratio_gamer_words_used = ratio_gamer_words_used/sum(user_dictionary.values())
+        swap_list.append(ratio_gamer_words_used)
+
+        user_value_dict[user] = swap_list
+
+        return user_value_dict
+
+
+    
+
 
