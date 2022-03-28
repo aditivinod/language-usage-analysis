@@ -40,10 +40,11 @@ def instances_to_decimal(dictionary):
     Returns:
         dictionary: a dictionary with strings as keys and floats as values
     """
+    return_dict = {}
     total_words = sum(dictionary.values())
     for word in dictionary:
-        dictionary[word] = dictionary[word]/total_words
-    return dictionary
+        return_dict[word] = dictionary[word]/total_words
+    return return_dict
 
 def remove_most_common(normal_dictionary, gamer_dictionary):
     """
@@ -77,23 +78,26 @@ def remove_most_common(normal_dictionary, gamer_dictionary):
     #gamer_dictionary = instances_to_decimal(gamer_dictionary)
 
     ignore_list = []
+
+
+    
     for word in normal_dictionary:
 
-        if word in gamer_dictionary and normal_dictionary[word]*1.15 > \
-            gamer_dictionary[word] > normal_dictionary[word]*.85:
+        if word in gamer_dictionary and normal_dictionary[word]*1.25 > \
+            gamer_dictionary[word] > normal_dictionary[word]*.75:
 
             ignore_list.append(word)
-            gamer_dictionary.pop(word)
+            
         
-    for word in ignore_list:
-        normal_dictionary.pop(word)
-    
-    return normal_dictionary,gamer_dictionary, ignore_list
+    normal_return_dict = {word:value for (word,value) in normal_dictionary.items() if word not in ignore_list }
+    gamer_return_dict = {word:value for (word,value) in gamer_dictionary.items() if word not in ignore_list }
+
+    return normal_return_dict,gamer_return_dict, ignore_list
 
 def remove_too_uncommon(word_dictionary, threshold =20):
     """
     remove words from the dictionary that show up less than a specified
-    number of times
+    number of times. Also remove entries that are strings longer than length 20
 
     Args:
         word_dictionary: a dictionary with words as keys and integers as values
@@ -102,12 +106,21 @@ def remove_too_uncommon(word_dictionary, threshold =20):
     
     """
 
-    delete_word = [key for key in word_dictionary if int(word_dictionary[key]) \
-        < threshold]
+    delete_word = [key for key in dict(word_dictionary).keys() if int(word_dictionary[key]) \
+        < threshold or len(key) > 20]
+    
+    #remove typo words that repeat themselves of the form "wordcword"
+    for key in dict(word_dictionary).keys():
+        if key not in delete_word and "c" in key and (len(key) - 1) % 2 == 0:
+            half_word = key[0:int((len(key)-1)/2)]
+            if half_word in key[int(((len(key)-1)/2)+1):len(key)]:
+                delete_word.append(key)
     
     for key in delete_word: word_dictionary.pop(key)
+    word_return_dictionary = {word:value for (word,value) in word_dictionary.items() if word not in delete_word }
 
-    return word_dictionary
+
+    return word_return_dictionary
 
 def determine_gamer_words(normal_dictionary,gamer_dictionary):
 
@@ -130,13 +143,13 @@ def determine_gamer_words(normal_dictionary,gamer_dictionary):
     for word in gamer_dictionary:
         #determine a word to be a gamer word if it is used 50 times more
         #frequently in gamer subreddits than normal subreddits
-        if word in normal_dictionary and normal_dictionary[word] <\
-            gamer_dictionary[word]/5:
+        if (word in normal_dictionary )and (normal_dictionary[word] <\
+            gamer_dictionary[word]/8):
             gamer_words.append(word)
         #if the word is not present in the normal dictionary, then use a simple
         #percentage of uses comparison to determine if the word is used
         #frequently enough to be determined a gamer word
-        elif word not in normal_dictionary and gamer_dictionary[word] > .00005:
+        elif (word not in normal_dictionary) and (gamer_dictionary[word] > .000079):
             gamer_words.append(word)
     return gamer_words
 
@@ -161,18 +174,21 @@ def parse_words(normal_dictionary, gamer_dictionary, threshold):
     
     """
     #print(len(gamer_dictionary))
-    gamer_dictionary = remove_too_uncommon(gamer_dictionary,threshold)
-    normal_dictionary = remove_too_uncommon(normal_dictionary,threshold)
+    working_gamer_dictionary = remove_too_uncommon(gamer_dictionary,threshold)
+    working_normal_dictionary = remove_too_uncommon(normal_dictionary,threshold)
     #print(len(gamer_dictionary))
     #curate the dictionary sets
-    normal_dictionary, gamer_dictionary, ignore_list = remove_most_common(normal_dictionary\
-        , gamer_dictionary)
+    working_normal_dictionary = instances_to_decimal(working_normal_dictionary)
+    working_gamer_dictionary = instances_to_decimal(working_gamer_dictionary)
+
+    working_normal_dictionary, working_gamer_dictionary, ignore_list = remove_most_common(working_normal_dictionary\
+        , working_gamer_dictionary)
     #print(len(gamer_dictionary))
 
     #determine gamer words
-    gamer_words = determine_gamer_words(normal_dictionary,gamer_dictionary)
+    gamer_words = determine_gamer_words(working_normal_dictionary,working_gamer_dictionary)
 
-    return normal_dictionary,gamer_dictionary,gamer_words, ignore_list
+    return working_normal_dictionary,working_gamer_dictionary,gamer_words, ignore_list
 
 
 
