@@ -288,7 +288,14 @@ def get_file_list(folder_path):
     file_list = [folder_path +"/" + user for user in file_list]
     return file_list
 
-
+def find_most_frequent_gamer_words(user_dict, gamer_words, num_items):
+    user_gamer_words = {}
+    for word in user_dict:
+        if word in gamer_words == True:
+            user_gamer_words[word] = user_dict[word]
+            print("E")
+    
+    return find_most_frequent(user_gamer_words, num_items)
     
 
 
