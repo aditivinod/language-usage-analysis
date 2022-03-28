@@ -3,9 +3,9 @@ from PIL import Image, ImageDraw, ImageFont
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 
-def got_bitches(result):
-    print("You have no bitches")
-
+"""
+Do the docstring, bitch.
+"""
 def word_cloud(frequency_dict):
     wc = WordCloud(background_color="white").generate_from_frequencies(frequency_dict)
     plt.figure(figsize = (10,10))
@@ -13,6 +13,9 @@ def word_cloud(frequency_dict):
     plt.axis(False)
     plt.show()
 
+"""
+Do the docstring, bitch.
+"""
 def create_profile_image(name, has_bitches, gamer_freq, normal_freq, most_used):
     # Text contents
     username = str(name)
