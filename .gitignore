@@ -130,3 +130,6 @@ dmypy.json
 
 #API keys
 api_keys.py
+
+#testing document
+test_gamer_words.ipynb
