@@ -189,7 +189,8 @@ def parse_words(normal_dictionary, gamer_dictionary, threshold):
     #determine gamer words
     gamer_words = determine_gamer_words(working_normal_dictionary,working_gamer_dictionary)
 
-    return working_normal_dictionary,working_gamer_dictionary,gamer_words, ignore_list
+    return working_normal_dictionary, working_gamer_dictionary, gamer_words, \
+        ignore_list
 
 
 
@@ -244,7 +245,7 @@ def analyze_users_language(normal_dictionary, gamer_dictionary, gamer_words, ign
         user_dictionary = csv_to_dict(user)
         
         #remove non useful user data
-        user_dictionary = remove_too_uncommon(user_dictionary,3)
+        user_dictionary = remove_too_uncommon(user_dictionary,1)
         user_dictionary = {word:value for (word,value) in user_dictionary.items() if word not in ignore_list}
         user_dictionary = instances_to_decimal(user_dictionary)
 
@@ -263,7 +264,29 @@ def analyze_users_language(normal_dictionary, gamer_dictionary, gamer_words, ign
 
         user_value_dict[user] = swap_list
 
-        return user_value_dict
+    return user_value_dict
+
+def stats_lists(stats_dict, folder_path):
+    file_list = get_file_list(folder_path)
+
+    normal_closeness = []
+    gamer_closeness = []
+    gamer_all_ratio = []
+
+    for user in file_list:
+        normal_closeness.append(stats_dict[user][0])
+        gamer_closeness.append(stats_dict[user][1])
+        gamer_all_ratio.append(stats_dict[user][2])
+    
+    return [normal_closeness, gamer_closeness, gamer_all_ratio]
+
+def is_gamer():
+    pass
+
+def get_file_list(folder_path):
+    file_list = os.listdir(folder_path)
+    file_list = [folder_path +"/" + user for user in file_list]
+    return file_list
 
 
     

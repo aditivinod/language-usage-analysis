@@ -4,7 +4,15 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 
 """
-Do the docstring, bitch.
+Given a dictionary containing words and their frequencies, creates a word
+cloud image representing said dictionary.
+
+Args:
+    frequency_dict: A dictionary containing keys that are strings, or words
+        and values that are integers, or frequencies of the corresponding
+        words.
+Returns:
+    None
 """
 def word_cloud(frequency_dict):
     wc = WordCloud(background_color="white").generate_from_frequencies(frequency_dict)
@@ -52,3 +60,20 @@ def create_profile_image(name, has_bitches, gamer_freq, normal_freq, most_used):
     draw.text((190, 125), top_words, font=common_words_font, fill=(0, 0, 0))
 
     img.show()
+
+def single_histogram(data_list, num_bins, x_label, plt_title):
+    plt.hist(data_list, density=True, bins=num_bins)
+    mn, mx = plt.xlim()
+    plt.xlim(mn, mx)
+    plt.ylabel("Frequency")
+    plt.xlabel(x_label)
+    plt.title(plt_title)
+
+def stacked_histogram(data_list, num_bins, label_1, label_2, label_3, plt_title):
+    plt.hist(data_list[0], num_bins, alpha=0.33, label=label_1)
+    plt.hist(data_list[1], num_bins, alpha=0.33, label=label_2)
+    plt.hist(data_list[2], num_bins, alpha=0.33, label=label_3)
+    plt.legend(loc='upper right')
+    plt.ylabel("Frequency")
+    plt.title(plt_title)
+    plt.show()
