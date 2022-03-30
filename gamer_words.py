@@ -266,7 +266,7 @@ def analyze_users_language(normal_dictionary, gamer_dictionary, gamer_words, ign
         #remove non useful user data
         user_dictionary = remove_too_uncommon(user_dictionary,1)
         user_dictionary = {word:value for (word,value) in user_dictionary.items() if word not in ignore_list}
-        user_dictionary = instances_to_decimal(user_dictionary)
+        user_dictionary, total_user_words = instances_to_decimal(user_dictionary)
 
         #print(user_dictionary)
         #print(type(user_dictionary))
