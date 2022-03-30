@@ -8,6 +8,7 @@ example_dict = {"gamer":1, "gamers":2, "gaming":3, "the": 7, "potassium": 9, \
 from operator import itemgetter
 import math
 import os
+from types import WrapperDescriptorType
 
 from sympy import true
 from scrape_data import csv_to_dict
@@ -146,7 +147,7 @@ def determine_gamer_words(normal_dictionary,gamer_dictionary):
     for word in gamer_dictionary:
         #determine a word to be a gamer word if it is used 50 times more
         #frequently in gamer subreddits than normal subreddits
-        if (word in normal_dictionary )and (normal_dictionary[word] <\
+        if (word in normal_dictionary) and (normal_dictionary[word] <\
             gamer_dictionary[word]/8):
             gamer_words.append(word)
         #if the word is not present in the normal dictionary, then use a simple
@@ -313,5 +314,21 @@ def find_most_frequent_gamer_words(user_dict, gamer_words, num_items):
     
     return find_most_frequent(user_gamer_words, num_items)
     
-
+def determine_gamer_words_frequency(normal_dictionary, gamer_dictionary):
+    gamer_words = {}
+    
+    for word in gamer_dictionary:
+        #determine a word to be a gamer word if it is used 50 times more
+        #frequently in gamer subreddits than normal subreddits
+        if word in normal_dictionary and normal_dictionary[word] <\
+            gamer_dictionary[word]/8:
+            gamer_words[word] = gamer_dictionary[word]
+        #if the word is not present in the normal dictionary, then use a simple
+        #percentage of uses comparison to determine if the word is used
+        #frequently enough to be determined a gamer word
+        elif (word not in normal_dictionary) and (gamer_dictionary[word] > .000079):
+            gamer_words[word] = gamer_dictionary[word]
+    return gamer_words
+    
+    
 
