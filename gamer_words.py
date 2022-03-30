@@ -281,7 +281,7 @@ def stats_lists(stats_dict, folder_path):
     return [normal_closeness, gamer_closeness, gamer_all_ratio]
 
 def is_gamer():
-    pass
+    
 
 def get_file_list(folder_path):
     file_list = os.listdir(folder_path)
@@ -291,9 +291,8 @@ def get_file_list(folder_path):
 def find_most_frequent_gamer_words(user_dict, gamer_words, num_items):
     user_gamer_words = {}
     for word in user_dict:
-        if word in gamer_words == True:
+        if word in gamer_words:
             user_gamer_words[word] = user_dict[word]
-            print("E")
     
     return find_most_frequent(user_gamer_words, num_items)
     
