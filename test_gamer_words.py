@@ -34,15 +34,15 @@ find_most_frequent_cases = [
 
 instances_to_decimal_cases = [
     #check that the simplest case of the function works
-    ({"cheese":1},{"cheese":1}),
+    ({"cheese":1},{"cheese":1},1),
     #check that single word inputs always result in one
-    ({"cheese":10101},{"cheese":1}),
+    ({"cheese":10101},{"cheese":1},10101),
     #check that a simple dictionary with multiple words with positive integer
     #values functions
-    ({"cheese":1,"malt":2},{"cheese":1/3,"malt":2/3}),
+    ({"cheese":1,"malt":2},{"cheese":1/3,"malt":2/3},3),
     #check that if the sum of the values of the dictionary is 0, then the
     #function returns an empty dictionary
-    ({"cheese":0,"malt":0},{})
+    ({"cheese":0,"malt":0},{},0)
 
 
 ]
@@ -50,22 +50,46 @@ instances_to_decimal_cases = [
 remove_most_common_cases = [
     #Check that a blank normal dictionary does not remove any words from the
     #gamer dictionary
-    ({},{"game":.1,"gaming":.6,"poggers":.3},{},{"game":.1,"gaming":.6,"poggers":.3}\
-        ,[]),
-    ({"game":.13},{"game":.1,"gaming":.6,"poggers":.3},{},{"gaming":.6,"poggers":.3}\
-        ,[]),
+    ({},{"game":.1,"gaming":.6,"poggers":.3},0,1 \
+        ,{},{"game":.1,"gaming":.6,"poggers":.3},[]),
+    
+    #check a simple case where a word gets removed
+    ({"game":.13},{"game":.1,"gaming":.7,"poggers":.5},1,1,\
+        {},{"gaming":.7/1.2,"poggers":.5/1.2},["game"]),
+
+    #check more complex case where some words get removed, some words are 
+    #different in each dictionary and the total number of words in each 
+    #dictionary is both not one and not the same
+    ({"game":.13,"poggers":1,"gaming":.65,"soul":1},{"game":.1,"gaming":.7,"salmon":.4,"poggers":.6},3,4,\
+        {"poggers":1/(1 + 1),"soul":1/(1 + 1)},{"salmon":.4/1,"poggers":.6/1},["game","gaming"]),
+
+
 
 
 ]
 
-# remove_too_uncommon_cases = [
-   
+remove_too_uncommon_cases = [
+    #test a simple case with clearly removable entries and a threshold equal to
+    #one of the values of a key
+   ({"gamers":1,"pasta":24,"notgamer":4,"gamingaminggaming":2},4,\
+       {"pasta":24,"notgamer":4}),
+    #test that keys of the form "wordcword" get removed
+    ({"mochacmocha":101010101,"gamers":6,"aditicaditi":85,"lukecaditi":16,\
+        "pastacpasta":2},3,{"gamers":6,"lukecaditi":16}),
+    #check that overly long entries are removed
+    ({"asfdljkasfdladsfjksfdakhasfdlfsda":110},2,{}),
+    #check an empty dictionary
+    ({},0,{})
 
-# ]
+    
 
-# determine_gamer_words_cases = [
-  
-# ]
+]
+
+determine_gamer_words_cases = [
+  ({},{},[]),
+
+
+]
 
 # parse_words_cases = [
 #     # Test a short strand starting with a start codon whose reverse complement
@@ -126,9 +150,9 @@ def test_find_most_frequent(freq_input_dict, freq_input_int, output_dict):
     assert find_most_frequent(freq_input_dict, freq_input_int) == output_dict
 
 
-@pytest.mark.parametrize("input_dictionary,output_dictionary",
+@pytest.mark.parametrize("input_dictionary,output_dictionary,total_words",
                          instances_to_decimal_cases)
-def test_instances_to_decimal(input_dictionary, output_dictionary):
+def test_instances_to_decimal(input_dictionary, output_dictionary,total_words):
     """
     Test that a string of nucleotides get mapped to its reverse complement.
 
@@ -143,60 +167,60 @@ def test_instances_to_decimal(input_dictionary, output_dictionary):
         reverse_complement: A string representing the expected reverse
             complement of strand.
     """
-    assert instances_to_decimal(input_dictionary) == output_dictionary
+    assert instances_to_decimal(input_dictionary) == (output_dictionary,total_words)
 
 
-@pytest.mark.parametrize("normal_dictionary,gamer_dictionary,normal_dict_out,\
+@pytest.mark.parametrize("normal_dictionary,gamer_dictionary,normal_total_words,gamer_total_words,normal_dict_out,\
 gamer_dict_out,ignore_list_out", remove_most_common_cases)
-def test_remove_most_common(normal_dictionary, gamer_dictionary,normal_dict_out,\
+def test_remove_most_common(normal_dictionary, gamer_dictionary,normal_total_words,gamer_total_words,normal_dict_out,\
     gamer_dict_out,ignore_list_out):
     """
 #     """
-    assert remove_most_common(normal_dictionary, gamer_dictionary) == \
+    assert remove_most_common(normal_dictionary, gamer_dictionary,normal_total_words,gamer_total_words) == \
         (normal_dict_out,gamer_dict_out,ignore_list_out)
 
-# @pytest.mark.parametrize("strand,orfs", find_all_orfs_one_frame_cases)
-# def test_find_all_orfs_oneframe(strand, orfs):
-#     """
-#     Test that a string representing a strand of DNA gets mapped to a list of all
-#     non-overlapping open reading frames (ORFs) aligned to its frame.
+@pytest.mark.parametrize("dictionary,threshold,dictionary_out", remove_too_uncommon_cases)
+def test_remove_too_uncommon(dictionary,threshold,dictionary_out ):
+    """
+    Test that a string representing a strand of DNA gets mapped to a list of all
+    non-overlapping open reading frames (ORFs) aligned to its frame.
 
-#     Check that given a string representing a strand of DNA as defined above, the
-#     find_all_orfs_oneframe function returns a list of strings representing all
-#     non-overlapping ORFs in the strand that are aligned to the strand's frame
-#     (i.e., starting a multiple of 3 nucleotides from the start of the strand).
-#     Each ORF is a strand of DNA from a START codon to a STOP codon (or in the
-#     case of the last ORF in the strand, to the end of the strand if no STOP
-#     codon is encountered during reading).
+    Check that given a string representing a strand of DNA as defined above, the
+    find_all_orfs_oneframe function returns a list of strings representing all
+    non-overlapping ORFs in the strand that are aligned to the strand's frame
+    (i.e., starting a multiple of 3 nucleotides from the start of the strand).
+    Each ORF is a strand of DNA from a START codon to a STOP codon (or in the
+    case of the last ORF in the strand, to the end of the strand if no STOP
+    codon is encountered during reading).
 
-#     Args:
-#         strand: A string representing a strand of DNA.
-#         orfs: A list of strings representing the expected strands of DNA that
-#             are ORFs within strand's frame.
-#     """
-#     assert Counter(find_all_orfs_one_frame(strand)) == Counter(orfs)
+    Args:
+        strand: A string representing a strand of DNA.
+        orfs: A list of strings representing the expected strands of DNA that
+            are ORFs within strand's frame.
+    """
+    assert remove_too_uncommon(dictionary,threshold) == dictionary_out
 
 
-# @pytest.mark.parametrize("strand,orfs", find_all_orfs_cases)
-# def test_find_all_orfs(strand, orfs):
-#     """
-#     Test that a string representing a strand of DNA gets mapped to a list of all
-#     open reading frames within the strand, with no overlapping ORFs within any
-#     given frame of the strand.
+@pytest.mark.parametrize("normal_dictionary,gamer_dictionary,word_list", determine_gamer_words_cases)
+def test_determine_gamer_words(normal_dictionary, gamer_dictionary,word_list):
+    """
+    Test that a string representing a strand of DNA gets mapped to a list of all
+    open reading frames within the strand, with no overlapping ORFs within any
+    given frame of the strand.
 
-#     Check that given a string representing a strand of DNA as defined above, the
-#     find_all_orfs function returns a list of strings representing all ORFs in
-#     the strand as defined above. Overlapping ORFs are allowed as long as they do
-#     not occur in different frames (i.e., each ORF is only non-overlapping with
-#     the other ORFs in its own frame).
+    Check that given a string representing a strand of DNA as defined above, the
+    find_all_orfs function returns a list of strings representing all ORFs in
+    the strand as defined above. Overlapping ORFs are allowed as long as they do
+    not occur in different frames (i.e., each ORF is only non-overlapping with
+    the other ORFs in its own frame).
 
-#     Args:
-#         strand: A string representing a strand of DNA.
-#         orfs: A list of strings representing the expected strands of DNA that
-#             are ORFs within strand, with no overlapping ORFs within one frame of
-#             strand.
-#     """
-#     assert Counter(find_all_orfs(strand)) == Counter(orfs)
+    Args:
+        strand: A string representing a strand of DNA.
+        orfs: A list of strings representing the expected strands of DNA that
+            are ORFs within strand, with no overlapping ORFs within one frame of
+            strand.
+    """
+    assert determine_gamer_words(normal_dictionary,gamer_dictionary) == word_list
 
 
 # @pytest.mark.parametrize("strand,orfs", find_all_orfs_both_strands_cases)

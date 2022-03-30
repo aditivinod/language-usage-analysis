@@ -94,11 +94,17 @@ def remove_most_common(normal_dictionary, gamer_dictionary,normal_total_words, \
             gamer_dictionary.items()}
         return normal_return_dict, gamer_return_dict, ignore_list
 
+    #upon further inspection the next few things I do are redundant
+    #mathematically. so are the total word inputs. but it was too much work to
+    #put them in and im not removing them.
+
     #turn the decimal dictionaries into frequency dictionaries
     normal_return_dict = {word:value*normal_total_words for (word,value) in\
          normal_dictionary.items() if word not in ignore_list}
     gamer_return_dict = {word:value*gamer_total_words for (word,value) in \
         gamer_dictionary.items() if word not in ignore_list}
+    
+
     #find the sum of all values in both frequency dictionaries
     new_gamer_total_words = sum(gamer_return_dict.values())
     new_normal_total_words = sum(normal_return_dict.values())
@@ -130,7 +136,7 @@ def remove_too_uncommon(word_dictionary, threshold =20):
             if half_word in key[int(((len(key)-1)/2)+1):len(key)]:
                 delete_word.append(key)
     
-    for key in delete_word: word_dictionary.pop(key)
+    #for key in delete_word: word_dictionary.pop(key)
     word_return_dictionary = {word:value for (word,value) in word_dictionary.items() if word not in delete_word }
 
 
