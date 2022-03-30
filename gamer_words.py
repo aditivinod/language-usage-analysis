@@ -8,6 +8,9 @@ example_dict = {"gamer":1, "gamers":2, "gaming":3, "the": 7, "potassium": 9, \
 from operator import itemgetter
 import math
 import os
+from types import WrapperDescriptorType
+
+from sympy import true
 from scrape_data import csv_to_dict
 
 def find_most_frequent(word_dictionary, number_items):
@@ -153,7 +156,7 @@ def determine_gamer_words(normal_dictionary,gamer_dictionary):
     for word in gamer_dictionary:
         #determine a word to be a gamer word if it is used 50 times more
         #frequently in gamer subreddits than normal subreddits
-        if (word in normal_dictionary )and (normal_dictionary[word] <\
+        if (word in normal_dictionary) and (normal_dictionary[word] <\
             gamer_dictionary[word]/8):
             gamer_words.append(word)
         #if the word is not present in the normal dictionary, then use a simple
@@ -198,7 +201,8 @@ def parse_words(normal_dictionary, gamer_dictionary, threshold):
     #determine gamer words
     gamer_words = determine_gamer_words(working_normal_dictionary,working_gamer_dictionary)
 
-    return working_normal_dictionary,working_gamer_dictionary,gamer_words, ignore_list
+    return working_normal_dictionary, working_gamer_dictionary, gamer_words, \
+        ignore_list
 
 
 
@@ -253,7 +257,7 @@ def analyze_users_language(normal_dictionary, gamer_dictionary, gamer_words, ign
         user_dictionary = csv_to_dict(user)
         
         #remove non useful user data
-        user_dictionary = remove_too_uncommon(user_dictionary,3)
+        user_dictionary = remove_too_uncommon(user_dictionary,1)
         user_dictionary = {word:value for (word,value) in user_dictionary.items() if word not in ignore_list}
         user_dictionary = instances_to_decimal(user_dictionary)
 
@@ -274,7 +278,66 @@ def analyze_users_language(normal_dictionary, gamer_dictionary, gamer_words, ign
 
     return user_value_dict
 
+"""
+Do the documentation, bitch.
+"""
+def stats_lists(stats_dict, folder_path):
+    file_list = get_file_list(folder_path)
 
+    normal_closeness = []
+    gamer_closeness = []
+    gamer_all_ratio = []
+
+    for user in file_list:
+        normal_closeness.append(stats_dict[user][0])
+        gamer_closeness.append(stats_dict[user][1])
+        gamer_all_ratio.append(stats_dict[user][2])
     
+    return [normal_closeness, gamer_closeness, gamer_all_ratio]
 
+"""
+Do the documentation, bitch.
+"""
+def is_gamer(gamer_freq, normal_freq):
+    threshold = (gamer_freq+normal_freq)/2
+    if gamer_freq > threshold: 
+        return True
+    return False
+
+"""
+Do the documentation, bitch.
+"""
+def get_file_list(folder_path):
+    file_list = os.listdir(folder_path)
+    file_list = [folder_path +"/" + user for user in file_list]
+    return file_list
+
+"""
+Do the documentation, bitch.
+"""
+def find_most_frequent_gamer_words(user_dict, gamer_words, num_items):
+    user_gamer_words = {}
+    for word in user_dict:
+        if word in gamer_words:
+            user_gamer_words[word] = user_dict[word]
+    
+    return find_most_frequent(user_gamer_words, num_items)
+    
+def determine_gamer_words_frequency(normal_dictionary, gamer_dictionary):
+    gamer_words = {}
+    
+    for word in gamer_dictionary:
+        #determine a word to be a gamer word if it is used 50 times more
+        #frequently in gamer subreddits than normal subreddits
+        if word in normal_dictionary and normal_dictionary[word] <\
+            gamer_dictionary[word]/8:
+            gamer_words[word] = gamer_dictionary[word]
+        #if the word is not present in the normal dictionary, then use a simple
+        #percentage of uses comparison to determine if the word is used
+        #frequently enough to be determined a gamer word
+        elif (word not in normal_dictionary) and (gamer_dictionary[word] > .000079):
+            gamer_words[word] = gamer_dictionary[word]
+    return gamer_words
+    
+    
 
