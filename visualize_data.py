@@ -42,9 +42,9 @@ def create_profile_image(name, has_bitches, gamer_freq, normal_freq, \
     # Text contents
     username = str(name)
     if has_bitches is True:
-        bitches = "NO BITCHES"
+        bitches = "GAMER"
     else:
-        bitches = "GETS BITCHES"
+        bitches = "NOT A GAMER"
     gamer_frequency = "Gamer Percentage - " + str(round(gamer_freq*100, 2)) + "%"
     normal_frequency = "Normal Percentage - " + str(round(normal_freq*100, 2)) + "%"
     gamer_to_all = "Gamer:All Words Ratio - " + str(round(gamer_all_freq, 2))
