@@ -8,6 +8,8 @@ example_dict = {"gamer":1, "gamers":2, "gaming":3, "the": 7, "potassium": 9, \
 from operator import itemgetter
 import math
 import os
+
+from sympy import true
 from scrape_data import csv_to_dict
 
 def find_most_frequent(word_dictionary, number_items):
@@ -266,6 +268,9 @@ def analyze_users_language(normal_dictionary, gamer_dictionary, gamer_words, ign
 
     return user_value_dict
 
+"""
+Do the documentation, bitch.
+"""
 def stats_lists(stats_dict, folder_path):
     file_list = get_file_list(folder_path)
 
@@ -280,14 +285,26 @@ def stats_lists(stats_dict, folder_path):
     
     return [normal_closeness, gamer_closeness, gamer_all_ratio]
 
-def is_gamer():
-    
+"""
+Do the documentation, bitch.
+"""
+def is_gamer(gamer_freq, normal_freq):
+    threshold = (gamer_freq+normal_freq)/2
+    if gamer_freq > threshold: 
+        return True
+    return False
 
+"""
+Do the documentation, bitch.
+"""
 def get_file_list(folder_path):
     file_list = os.listdir(folder_path)
     file_list = [folder_path +"/" + user for user in file_list]
     return file_list
 
+"""
+Do the documentation, bitch.
+"""
 def find_most_frequent_gamer_words(user_dict, gamer_words, num_items):
     user_gamer_words = {}
     for word in user_dict:

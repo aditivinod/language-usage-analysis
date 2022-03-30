@@ -24,6 +24,14 @@ def word_cloud(frequency_dict):
 """
 Creates an 'id card' representing an individual users' gamer sub-internet
 analysis results. 
+
+Args:
+    name: 
+    has_bitches: 
+    gamer_freq: 
+    normal_freq: 
+    gamer_all_freq: 
+    most_used: 
 """
 def create_profile_image(name, has_bitches, gamer_freq, normal_freq, \
     gamer_all_freq, most_used):
@@ -33,10 +41,13 @@ def create_profile_image(name, has_bitches, gamer_freq, normal_freq, \
     
     # Text contents
     username = str(name)
-    bitches = str(has_bitches)
-    gamer_frequency = "Gamer Closeness - " + str(gamer_freq)
-    normal_frequency = "Normal Closeness - " + str(normal_freq)
-    gamer_to_all = "Gamer:All Ratio - " + str(gamer_all_freq)
+    if has_bitches is True:
+        bitches = "NO BITCHES"
+    else:
+        bitches = "GETS BITCHES"
+    gamer_frequency = "Gamer Percentage - " + str(round(gamer_freq*100, 2)) + "%"
+    normal_frequency = "Normal Percentage - " + str(round(normal_freq*100, 2)) + "%"
+    gamer_to_all = "Gamer:All Words Ratio - " + str(round(gamer_all_freq, 2))
     top_words = "Most common gamer words - \n"+', '.join([str(elem) for elem in most_used])
 
     # Font settings
