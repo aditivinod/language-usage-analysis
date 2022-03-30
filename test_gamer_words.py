@@ -10,9 +10,8 @@ from gamer_words import (
     remove_most_common,
     remove_too_uncommon,
     determine_gamer_words,
-    parse_words,
     determine_language_similarity,
-    analyze_users_language,
+    is_gamer,
 )
 
 
@@ -86,27 +85,48 @@ remove_too_uncommon_cases = [
 ]
 
 determine_gamer_words_cases = [
-  ({},{},[]),
+    #check a simple case with a gamer word that is used drastically more in the
+    #gamer dictionary than the normal dictionary
+    ({"gaming":.01,"pogggg":.01},{"gaming":.1,"pogggg":.05},["gaming"]),
+    #check that a gamer word that isn't in the normal dictionary makes the list
+    ({"blame":.152},{"blame":.153,"sled":.000078,"sleigh":.00008},["sleigh"]),
+    #check that a word that shows up a substantially different amount in the
+    #normal and gamer dictionaries but is used less in the gamer dictionary is
+    #not considered a gamer word
+    ({"fantasy":1},{"fantasy":.000000000000001},[])
+]
+
+#the parse_words function is composed entirely of the previous functions and
+#thus does not need unit tests, or rather the unit tests for this function 
+#would fundamentally test the same things as the previous unit tests
+
+determine_language_similarity_cases = [
+    #check that an empty language dictionary outputs the sum of the squares
+    #of the user dictionary
+    ({},{"gaming":3,"gamers":4},5),
+    #check that if the user and language dictionaries are the same that
+    #the result is 0
+    ({"gaming":3,"gamers":4},{"gaming":3,"gamers":4},0),
+    #Check a case with words in both dictionaries but with with unequal values
+    ({"gaming":2,"gamers":4},{"gaming":5,"gamers":8},5),
+
+#the analyze_users_language function does not have any unit tests written for it
+#because it requires a folder full of csv's to run, which would be ridiculous
+#to create for unit tests. Also, nearly every component of this function is
+#combinations of other functions that have unit tests, so we are confident that
+#the inner workings of the function function as intended. The fact that we
+#recieve usable and vizualizable data from this function has allowed us to
+#be confident that it works.
+
 
 
 ]
 
-# parse_words_cases = [
-#     # Test a short strand starting with a start codon whose reverse complement
-   
-# ]
-
-# determine_language_similarity_cases = [
-#     # An ORF covering the whole strand is by default the longest ORF.
+is_gamer_cases = [
+    # Check a single start codon.
   
 
-# ]
-
-# analyze_users_language_cases = [
-#     # Check a single start codon.
-  
-
-# ]
+]
 
 
 # # Define additional testing lists and functions that check other properties of
@@ -124,9 +144,6 @@ determine_gamer_words_cases = [
 #     assert get_complement(get_complement(nucleotide)) == nucleotide
 
 
-################################################################################
-# Don't change anything below these lines.
-################################################################################
 
 
 # Define standard testing functions to check functions' outputs given certain
@@ -223,42 +240,42 @@ def test_determine_gamer_words(normal_dictionary, gamer_dictionary,word_list):
     assert determine_gamer_words(normal_dictionary,gamer_dictionary) == word_list
 
 
-# @pytest.mark.parametrize("strand,orfs", find_all_orfs_both_strands_cases)
-# def test_find_all_orfs_both_strands(strand, orfs):
-#     """
-#     Test that a string representing a strand of DNA gets mapped to a list of
-#     all open reading frames within the strand or its reverse complement, with no
-#     overlapping ORFs within a given frame.
+@pytest.mark.parametrize("language_dict,user_dict,closeness_value", determine_language_similarity_cases)
+def test_determine_language_similarity(language_dict, user_dict,closeness_value):
+    """
+    Test that a string representing a strand of DNA gets mapped to a list of
+    all open reading frames within the strand or its reverse complement, with no
+    overlapping ORFs within a given frame.
 
-#     Check that given a string representing a strand of DNA as defined above, the
-#     find_all_orfs_both_strands function returns a list of strings representing
-#     all ORFs in the strand or its reverse complement as defined above.
+    Check that given a string representing a strand of DNA as defined above, the
+    find_all_orfs_both_strands function returns a list of strings representing
+    all ORFs in the strand or its reverse complement as defined above.
 
-#     Args:
-#         strand: A string representing a strand of DNA.
-#         orfs: A list of strings representing the expected strands of DNA that
-#             are ORFs within strand or its reverse complement, with no
-#             overlapping ORFs within one frame of either.
-#     """
-#     assert Counter(find_all_orfs_both_strands(strand)) == Counter(orfs)
+    Args:
+        strand: A string representing a strand of DNA.
+        orfs: A list of strings representing the expected strands of DNA that
+            are ORFs within strand or its reverse complement, with no
+            overlapping ORFs within one frame of either.
+    """
+    assert determine_language_similarity(language_dict,user_dict) == closeness_value
 
 
-# @pytest.mark.parametrize("strand,orf", find_longest_orf_cases)
-# def test_find_longest_orf(strand, orf):
-#     """
-#     Test that a string representing a strand of DNA gets mapped to a string
-#     representing the longest ORF within the strand or its reverse complement.
+@pytest.mark.parametrize("strand,orf", is_gamer_cases)
+def test_is_gamer(strand, orf):
+    """
+    Test that a string representing a strand of DNA gets mapped to a string
+    representing the longest ORF within the strand or its reverse complement.
 
-#     Check that given a string representing a strand of DNA as defined above, the
-#     find_longest_orf function returns a string representing a strand of DNA
-#     equal to the longest ORF within the strand or its reverse complement.
+    Check that given a string representing a strand of DNA as defined above, the
+    find_longest_orf function returns a string representing a strand of DNA
+    equal to the longest ORF within the strand or its reverse complement.
 
-#     Args:
-#         strand: A string representing a strand of DNA.
-#         orf: A string representing a strand of DNA equal to the expected longest
-#             ORF in strand or its reverse complement.
-#     """
-#     assert find_longest_orf(strand) == orf
+    Args:
+        strand: A string representing a strand of DNA.
+        orf: A string representing a strand of DNA equal to the expected longest
+            ORF in strand or its reverse complement.
+    """
+    assert is_gamer(strand) == orf
 
 
 # @pytest.mark.parametrize("strand,protein", encode_amino_acids_cases)
