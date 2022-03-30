@@ -33,7 +33,7 @@ def find_most_frequent(word_dictionary, number_items):
 
 
 
-def instances_to_decimal(dictionary, total_words):
+def instances_to_decimal(dictionary):
     """
     Convert the values of a dictionary from an integer to a decimal percentage
     of what percentage of the time that word is used in the total dataset
@@ -47,7 +47,7 @@ def instances_to_decimal(dictionary, total_words):
     return_dict = {}
     total_words = sum(dictionary.values())
     if total_words <= 0:
-        return return_dict
+        return return_dict, total_words
     for word in dictionary:
         return_dict[word] = dictionary[word]/total_words
     return return_dict, total_words
@@ -70,38 +70,39 @@ def remove_most_common(normal_dictionary, gamer_dictionary,normal_total_words, \
             from both dictionaries
         
     """
-    #convert values from the number of times a word is used to the frequency
-    #of times the word is used total for both the normal and gamer dictionaries
-    """
-    normal_total_words = sum(normal_dictionary.values())
-    for word in normal_dictionary:
-        normal_dictionary[word] = normal_dictionary[word]/normal_total_words
     
-    gamer_total_words = sum(gamer_dictionary.values())
-    for word in gamer_dictionary:
-        gamer_dictionary[word] = gamer_dictionary[word]/gamer_total_words
-    """
-    #normal_dictionary = instances_to_decimal(normal_dictionary)
-    #gamer_dictionary = instances_to_decimal(gamer_dictionary)
-
     ignore_list = []
-
-
-    
+    #create list of words to ignore
     for word in normal_dictionary:
 
         if word in gamer_dictionary and normal_dictionary[word]*1.25 > \
             gamer_dictionary[word] > normal_dictionary[word]*.75:
 
             ignore_list.append(word)
-            
     
-    normal_return_dict = {word:value*normal_total_words for (word,value) in normal_dictionary.items() if word not in ignore_list}
-    gamer_return_dict = {word:value*gamer_total_words for (word,value) in gamer_dictionary.items() if word not in ignore_list}
+    #what to do if nothing is in the normal dictionary  
+    if normal_total_words == 0:
+        normal_return_dict = {}
+        gamer_return_dict = {word:value for (word,value) in \
+            gamer_dictionary.items()}
+        return normal_return_dict, gamer_return_dict, ignore_list
+    #what to do if nothing is in the gamer dictionary
+    elif gamer_total_words == 0:
+        normal_return_dict = {word:value for (word,value) in \
+            normal_dictionary.items()}
+        gamer_return_dict = {word:value*gamer_total_words for (word,value) in \
+            gamer_dictionary.items()}
+        return normal_return_dict, gamer_return_dict, ignore_list
 
+    #turn the decimal dictionaries into frequency dictionaries
+    normal_return_dict = {word:value*normal_total_words for (word,value) in\
+         normal_dictionary.items() if word not in ignore_list}
+    gamer_return_dict = {word:value*gamer_total_words for (word,value) in \
+        gamer_dictionary.items() if word not in ignore_list}
+    #find the sum of all values in both frequency dictionaries
     new_gamer_total_words = sum(gamer_return_dict.values())
     new_normal_total_words = sum(normal_return_dict.values())
-
+    #divide the frequency dictionaries by the total values in each dictionary
     normal_return_dict = {word:value/new_normal_total_words for (word,value) in normal_return_dict.items()}
     gamer_return_dict = {word:value/new_gamer_total_words for (word,value) in gamer_return_dict.items() }
 
