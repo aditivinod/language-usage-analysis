@@ -45,9 +45,9 @@ def create_profile_image(name, has_bitches, gamer_freq, normal_freq, \
         bitches = "GAMER"
     else:
         bitches = "NOT A GAMER"
-    gamer_frequency = "Gamer Percentage - " + str(round(gamer_freq*100, 2)) + "%"
-    normal_frequency = "Normal Percentage - " + str(round(normal_freq*100, 2)) + "%"
-    gamer_to_all = "Gamer:All Words Ratio - " + str(round(gamer_all_freq, 2))
+    gamer_frequency = "Gamer Z-Score - " + str(round((gamer_freq), 4))
+    normal_frequency = "Normal Z-Score - " + str(round((normal_freq), 4))
+    gamer_to_all = "Gamer:All Words Ratio - " + str(round(gamer_all_freq, 4))
     top_words = "Most common gamer words - \n"+', '.join([str(elem) for elem in most_used])
 
     # Font settings
