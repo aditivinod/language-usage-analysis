@@ -4,7 +4,6 @@ import csv
 from string import punctuation
 from collections import Counter
 from api_keys import keys
-import pandas as pd
 
 """
 Creates a read-only instance of Reddit.
