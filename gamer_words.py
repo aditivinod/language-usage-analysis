@@ -507,7 +507,7 @@ def determine_gamer_words_frequency(normal_dictionary, gamer_dictionary):
         if word in normal_dictionary and normal_dictionary[word] <\
                 gamer_dictionary[word]/8:
             gamer_words[word] = gamer_dictionary[word]
-        # Ff the word is not present in the normal dictionary, then use a simple
+        # If the word is not present in the normal dictionary, then use a simple
         # percentage of uses comparison to determine if the word is used
         # frequently enough to be determined a gamer word
         elif (word not in normal_dictionary) and (gamer_dictionary[word] > .000079):
