@@ -196,6 +196,16 @@ def parse_words(normal_dictionary, gamer_dictionary, threshold):
     "normal" subreddits to find meaningfully different language patterns
     between the two word sets.
 
+    Args:
+        normal_dictionary = A dictionary with strings as keys representing words
+            and integers as values representing the number of times a word
+            gets used in the normal dataset
+        gamer_dictionary = A dictionary with strings as keys representing words 
+            and integers as values representing the number of times a word
+            gets used in the gamer dataset
+        threshold: An integer determining the minimum number of usages for a 
+            word to be considered in the dictionary for use in the
+            remove_too_uncommon function()
     Returns:
         working_normal_dictionary: a dictionary with strings as keys and floats
             as the values representing what ratio of the time that string gets 
@@ -205,6 +215,8 @@ def parse_words(normal_dictionary, gamer_dictionary, threshold):
             used in the gamer dataset.
         gamer_words: a list of strings representing words determined to be 
             meaningfully distinct to the gamer vocabulary.
+        ignore_list = a list of strings representing the words that were
+            removed from the original word dictionaries in this function
     """
     # Curate dictionary sets for word usages
     working_gamer_dictionary = remove_too_uncommon(gamer_dictionary,threshold)

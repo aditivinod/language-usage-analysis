@@ -3,11 +3,11 @@ gamer-detector aims to create a list of most commonly used words in specific int
 
 ## Installation
 The following libraries were utilized in python 3.9..7 in the Conda environment:
-PRAW Reddit API - ``$ pip install praw``
-Discord API - ``$ pip install -U discord.py``
-WordCloud - ``$ pip install wordcloud``
-Numpy - ``$ pip install numpy``
-MatPlotLib - ``$ pip install matplotlib``
+PRAW Reddit API - ``$ pip install praw`` \
+Discord API - ``$ pip install -U discord.py`` \
+WordCloud - ``$ pip install wordcloud`` \
+Numpy - ``$ pip install numpy`` \
+MatPlotLib - ``$ pip install matplotlib`` \
 
 ## Usage
 
