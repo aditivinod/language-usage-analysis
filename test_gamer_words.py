@@ -19,12 +19,12 @@ from gamer_words import (
 find_most_frequent_cases = [
     # Check that the simplest dictionary case returns correctly
     ({"cheese":1}, 1, {"cheese":1}),
-    #check that asking for no items returns an empty dictionary
+    # Check that asking for no items returns an empty dictionary
     ({"pedestrian":1}, 0, {}),
-    #check that a dictionary of 2 items returns items in the correct order
+    # Check that a dictionary of 2 items returns items in the correct order
     ({"cheese":1,"pedestrian":3,}, 2, {"pedestrian":3,"cheese":1}),
-    #check that the function can exclude cases if less words are asked for than
-    #are in the dictionary
+    # Check that the function can exclude cases if less words are asked for than
+    # are in the dictionary
     ({"cheese":1,"cheezits":4,"cheetos":7}, 2, {"cheetos":7,"cheezits":4})
     
 
@@ -32,33 +32,33 @@ find_most_frequent_cases = [
 ]
 
 instances_to_decimal_cases = [
-    #check that the simplest case of the function works
+    # Check that the simplest case of the function works
     ({"cheese":1},{"cheese":1},1),
-    #check that single word inputs always result in one
+    # Check that single word inputs always result in one
     ({"cheese":10101},{"cheese":1},10101),
-    #check that a simple dictionary with multiple words with positive integer
-    #values functions
+    # Check that a simple dictionary with multiple words with positive integer
+    # values functions
     ({"cheese":1,"malt":2},{"cheese":1/3,"malt":2/3},3),
-    #check that if the sum of the values of the dictionary is 0, then the
-    #function returns an empty dictionary
+    # Check that if the sum of the values of the dictionary is 0, then the
+    # function returns an empty dictionary
     ({"cheese":0,"malt":0},{},0)
 
 
 ]
 
 remove_most_common_cases = [
-    #Check that a blank normal dictionary does not remove any words from the
-    #gamer dictionary
+    # Check that a blank normal dictionary does not remove any words from the
+    # gamer dictionary
     ({},{"game":.1,"gaming":.6,"poggers":.3},0,1 \
         ,{},{"game":.1,"gaming":.6,"poggers":.3},[]),
     
-    #check a simple case where a word gets removed
+    # Check a simple case where a word gets removed
     ({"game":.13},{"game":.1,"gaming":.7,"poggers":.5},1,1,\
         {},{"gaming":.7/1.2,"poggers":.5/1.2},["game"]),
 
-    #check more complex case where some words get removed, some words are 
-    #different in each dictionary and the total number of words in each 
-    #dictionary is both not one and not the same
+    # Check more complex case where some words get removed, some words are 
+    # different in each dictionary and the total number of words in each 
+    # dictionary is both not one and not the same
     ({"game":.13,"poggers":1,"gaming":.65,"soul":1},{"game":.1,"gaming":.7,"salmon":.4,"poggers":.6},3,4,\
         {"poggers":1/(1 + 1),"soul":1/(1 + 1)},{"salmon":.4/1,"poggers":.6/1},["game","gaming"]),
 
@@ -68,16 +68,16 @@ remove_most_common_cases = [
 ]
 
 remove_too_uncommon_cases = [
-    #test a simple case with clearly removable entries and a threshold equal to
-    #one of the values of a key
+    # Test a simple case with clearly removable entries and a threshold equal to
+    # one of the values of a key
    ({"gamers":1,"pasta":24,"notgamer":4,"gamingaminggaming":2},4,\
        {"pasta":24,"notgamer":4}),
-    #test that keys of the form "wordcword" get removed
+    # Test that keys of the form "wordcword" get removed
     ({"mochacmocha":101010101,"gamers":6,"aditicaditi":85,"lukecaditi":16,\
         "pastacpasta":2},3,{"gamers":6,"lukecaditi":16}),
-    #check that overly long entries are removed
+    # Check that overly long entries are removed
     ({"asfdljkasfdladsfjksfdakhasfdlfsda":110},2,{}),
-    #check an empty dictionary
+    # Check an empty dictionary
     ({},0,{})
 
     
@@ -85,45 +85,52 @@ remove_too_uncommon_cases = [
 ]
 
 determine_gamer_words_cases = [
-    #check a simple case with a gamer word that is used drastically more in the
-    #gamer dictionary than the normal dictionary
+    # Check a simple case with a gamer word that is used drastically more in the
+    # Gamer dictionary than the normal dictionary
     ({"gaming":.01,"pogggg":.01},{"gaming":.1,"pogggg":.05},["gaming"]),
-    #check that a gamer word that isn't in the normal dictionary makes the list
+    # Check that a gamer word that isn't in the normal dictionary makes the list
     ({"blame":.152},{"blame":.153,"sled":.000078,"sleigh":.00008},["sleigh"]),
-    #check that a word that shows up a substantially different amount in the
-    #normal and gamer dictionaries but is used less in the gamer dictionary is
-    #not considered a gamer word
+    # Check that a word that shows up a substantially different amount in the
+    # normal and gamer dictionaries but is used less in the gamer dictionary is
+    # not considered a gamer word
     ({"fantasy":1},{"fantasy":.000000000000001},[])
 ]
 
-#the parse_words function is composed entirely of the previous functions and
-#thus does not need unit tests, or rather the unit tests for this function 
-#would fundamentally test the same things as the previous unit tests
+# The parse_words function is composed entirely of the previous functions and
+# thus does not need unit tests, or rather the unit tests for this function 
+# would fundamentally test the same things as the previous unit tests
 
 determine_language_similarity_cases = [
-    #check that an empty language dictionary outputs the sum of the squares
-    #of the user dictionary
+    # Check that an empty language dictionary outputs the sum of the squares
+    # of the user dictionary
     ({},{"gaming":3,"gamers":4},5),
-    #check that if the user and language dictionaries are the same that
-    #the result is 0
+    # Theck that if the user and language dictionaries are the same that
+    # the result is 0
     ({"gaming":3,"gamers":4},{"gaming":3,"gamers":4},0),
-    #Check a case with words in both dictionaries but with with unequal values
+    # Check a case with words in both dictionaries but with with unequal values
     ({"gaming":2,"gamers":4},{"gaming":5,"gamers":8},5),
-
-#the analyze_users_language function does not have any unit tests written for it
-#because it requires a folder full of csv's to run, which would be ridiculous
-#to create for unit tests. Also, nearly every component of this function is
-#combinations of other functions that have unit tests, so we are confident that
-#the inner workings of the function function as intended. The fact that we
-#recieve usable and vizualizable data from this function has allowed us to
-#be confident that it works.
-
-
-
 ]
 
+# The parse_words function does not have any unit tests written for it as it
+# is exclusively a combination of other functions that all have unit tests, and
+# as a result, we are sure that the inner workings of the function work as
+# intended.
+
+# The analyze_users_language function does not have any unit tests written for it
+# because it requires a folder full of csv's to run, which would be ridiculous
+# to create for unit tests. Also, nearly every component of this function is
+# combinations of other functions that have unit tests, so we are confident that
+# the inner workings of the function function as intended. The fact that we
+# recieve usable and vizualizable data from this function has allowed us to
+# be confident that it works.
+
+# stats_and_z_info is required to run through a folder full of CSV's to test;
+# since that would be too difficult to simulate, testing on the components
+# alone should be more than enough to ensure that the function works.
+
 is_gamer_cases = [
-    # Check a single start codon.
+    # Check that a negative and a positive z-value return True
+    
   
 
 ]
@@ -259,10 +266,12 @@ def test_determine_language_similarity(language_dict, user_dict,closeness_value)
 
 
 @pytest.mark.parametrize("strand,orf", is_gamer_cases)
-def test_is_gamer(strand, orf):
+def test_is_gamer(gamer_z, normal_z, gamer_status):
     """
-    
+    Determine whether or not the is_gamer() function properly determines
+    whether a user is a gamer or not based on their gamer and normal 
+    z-scores.
 
     """
-    assert is_gamer(strand) == orf
+    assert is_gamer(gamer_z, normal_z) == gamer_status
 
