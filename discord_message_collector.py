@@ -1,11 +1,18 @@
-import discord
-from api_keys import disc_keys
+"""
+Contains the Message Collector discord bot that is used to
+pull user message data from Discord and turn it into individual user
+CSVs.
+"""
 from collections import Counter
 from string import punctuation
 from discord.ext import commands
+import discord
 from scrape_data import dict_to_csv
+from api_keys import disc_keys
+
 
 bot = commands.Bot(command_prefix='~ ')
+
 
 @bot.event
 async def on_ready():
@@ -19,6 +26,7 @@ async def on_ready():
         None.
     """
     print(f"Runing {bot.user.name}")
+
 
 @bot.command()
 async def collect(ctx, member: discord.Member = None):
@@ -43,9 +51,9 @@ async def collect(ctx, member: discord.Member = None):
         try:
             async for message in channel.history(limit=None):
                 if message.author == member:
-                    words += message.content.lower().translate(str.maketrans( \
+                    words += message.content.lower().translate(str.maketrans(
                         '', '', punctuation))
-        except:
+        except discord.Forbidden:
             pass
 
     words = words.split()
