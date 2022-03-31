@@ -42,7 +42,7 @@ async def collect(ctx, member: discord.Member = None):
 
     user_dict = Counter(words)
 
-    filename = 'lock_data/' + str(member.name) + '.csv'
+    filename = str(member.name) + '.csv'
     with open(filename, 'w') as f:
         for key in user_dict.keys():
             f.write("%s,%s\n" % (key, user_dict[key]))

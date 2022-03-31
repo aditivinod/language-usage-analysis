@@ -289,7 +289,7 @@ def analyze_users_language(normal_dictionary, gamer_dictionary, gamer_words, ign
 
     return user_value_dict
 
-def have_a_crisis(stats_dict, folder_path):
+def stats_and_z_info(stats_dict, folder_path):
     # stats dict is output of analyze users_language
     file_list = get_file_list(folder_path)
 

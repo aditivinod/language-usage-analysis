@@ -15,7 +15,7 @@ def word_cloud(frequency_dict):
     Returns:
         None
     """
-    wc = WordCloud(background_color="white").generate_from_frequencies( \
+    wc = WordCloud(background_color="white", width=1920, height=1080).generate_from_frequencies( \
         frequency_dict)
     plt.figure(figsize = (10,10))
     plt.imshow(wc, interpolation='bilinear')
