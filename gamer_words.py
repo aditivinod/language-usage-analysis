@@ -476,7 +476,8 @@ def determine_gamer_words_frequency(gamer_words_list, gamer_dictionary):
     Creates a frequency dictionary for the gamer words list.
 
     Args:
-        gamer_words: A list containing the current gamer words.
+        gamer_words: A list containing strings representing the current gamer
+            words.
         gamer_dictionary: A dictionary representing the gamer words prior to
             removal of overly common terms. The keys are strings representing
             the words and the values are integers representing their
