@@ -1,10 +1,6 @@
 #take a dictionary of words and their relative frequency and parse through the
 #data to find specific "gamer words"
 
-example_dict = {"gamer":1, "gamers":2, "gaming":3, "the": 7, "potassium": 9, \
-"potassiums" : 9
-}
-
 from operator import itemgetter
 import math
 import os
@@ -17,16 +13,18 @@ from scrape_data import csv_to_dict
 def find_most_frequent(word_dictionary, number_items):
     """
     Find a specified number of keys from a dictionary that have the highest
-    integer values
+    integer values.
 
     Args:
-        word_dictionary: a dictionary with strings as keys and positive
-        integers as values
+        word_dictionary: A dictionary with strings as keys and positive
+            integers as values.
+        number_items: An integer determining how many value ordered items to
+            output.
     Returns:
-        most_frequent_dictionary: a dictionary with strings as keys and integers
-        as values
-    
+        most_frequent_dictionary: A value ordered dictionary with strings as
+            keys and integers as values.
     """
+
     most_frequent_dictionary = dict(sorted(word_dictionary.items(), key = \
         itemgetter(1), reverse = True)[:number_items])
     
@@ -36,17 +34,21 @@ def find_most_frequent(word_dictionary, number_items):
 
 def instances_to_decimal(dictionary):
     """
-    Convert the values of a dictionary from an integer to a decimal percentage
-    of what percentage of the time that word is used in the total dataset
+    Convert the values of a dictionary from an integer to a decimal ratio
+    of what frequency of the time that word is used in the total dataset.
 
     Args:
-        dictionary: a dictionary with strings as keys and positive integers
-        as values
+        dictionary: A dictionary with strings as keys and positive integers
+            as values.
     Returns:
-        dictionary: a dictionary with strings as keys and floats as values
+        return_dict: A dictionary with strings as keys and floats as values.
+        total_words: An integer that is the sum of the values in the input
+            dictionary representing the total number of words used is a language
+            set.
     """
     return_dict = {}
     total_words = sum(dictionary.values())
+    #avoids 0 division error
     if total_words <= 0:
         return return_dict, total_words
     for word in dictionary:
@@ -56,26 +58,36 @@ def instances_to_decimal(dictionary):
 def remove_most_common(normal_dictionary, gamer_dictionary,normal_total_words, \
     gamer_total_words):
     """
-    Remove words between dictionaries that show up similarly frequently
+    Remove words between dictionaries that show up similarly frequently between
+    the "normal" dataset and the "gamer" dataset.
 
     Args:
-        normal_dictionary = a dictionary with words as keys and integers as
-        values, sorted from highest to lowest by value magnitude
-        gamer_dictionary = a dictionary with words as keys and integers as
-        values, sorted from highest to lowest by value magnitude
+        normal_dictionary = A dictionary with strings as keys representing words 
+            and floats as values representing what ratio of the time a word gets
+            used in the normal dataset
+        gamer_dictionary = A dictionary with strings as keys representing words 
+            and floats as values representing what ratio of the time a word gets
+            used in the gamer dataset
+        normal_total_words: An integer representing the total instances of
+            word uses in the normal dataset
+        gamer_total_words: An integer representing the total instances of
+            word uses in the gamer dataset
     
     Returns:
-        normal_freq_dictionary = curated frequency list of normal words
-        gamer_freq_dictionary = curated frequency list of gamer words
-        ignore_list = a list of strings containing words which were omitted
-            from both dictionaries
+        normal_return_dict = A dictionary with strings as keys representing
+            words and floats as values representing what ratio of the time a 
+            word gets used in the normal dataset.
+        gamer_return_dict = A dictionary with strings as keys representing words 
+            and floats as values representing what ratio of the time a word gets
+            used in the gamer dataset.
+        ignore_list = A list of strings containing words which were omitted
+            from both dictionaries.
         
     """
     
     ignore_list = []
     #create list of words to ignore
     for word in normal_dictionary:
-
         if word in gamer_dictionary and normal_dictionary[word]*1.25 > \
             gamer_dictionary[word] > normal_dictionary[word]*.75:
 
@@ -95,40 +107,45 @@ def remove_most_common(normal_dictionary, gamer_dictionary,normal_total_words, \
             gamer_dictionary.items()}
         return normal_return_dict, gamer_return_dict, ignore_list
 
-    #upon further inspection the next few things I do are redundant
-    #mathematically. so are the total word inputs. but it was too much work to
-    #put them in and im not removing them.
-
     #turn the decimal dictionaries into frequency dictionaries
     normal_return_dict = {word:value*normal_total_words for (word,value) in\
          normal_dictionary.items() if word not in ignore_list}
     gamer_return_dict = {word:value*gamer_total_words for (word,value) in \
         gamer_dictionary.items() if word not in ignore_list}
     
-
     #find the sum of all values in both frequency dictionaries
     new_gamer_total_words = sum(gamer_return_dict.values())
     new_normal_total_words = sum(normal_return_dict.values())
     #divide the frequency dictionaries by the total values in each dictionary
-    normal_return_dict = {word:value/new_normal_total_words for (word,value) in normal_return_dict.items()}
-    gamer_return_dict = {word:value/new_gamer_total_words for (word,value) in gamer_return_dict.items() }
+    normal_return_dict = {word:value/new_normal_total_words for (word,value)\
+         in normal_return_dict.items()}
+    gamer_return_dict = {word:value/new_gamer_total_words for (word,value) \
+        in gamer_return_dict.items() }
 
     return normal_return_dict,gamer_return_dict, ignore_list
 
 def remove_too_uncommon(word_dictionary, threshold =20):
     """
-    remove words from the dictionary that show up less than a specified
+    Remove words from a dictionary that show up less than a specified
     number of times. Also remove entries that are strings longer than length 20
+    or words that fall into a specific type of typo.
 
     Args:
-        word_dictionary: a dictionary with words as keys and integers as values
-        threshold: an integer determining the minimum number of usages for a 
-            word to be considered in the dictionary
+        word_dictionary: A dictionary with strings as keys representing words 
+            and integers as values representing how many times that word
+            is used in a dataset.
+        threshold: An integer determining the minimum number of usages for a 
+            word to be considered in the dictionary.
+    Returns:
+        word_return_dictionary: A dictionary with strings as keys representing 
+            words and integers as values representing how many times that word
+            is used in a dataset.
+
     
     """
 
-    delete_word = [key for key in dict(word_dictionary).keys() if int(word_dictionary[key]) \
-        < threshold or len(key) > 20]
+    delete_word = [key for key in dict(word_dictionary).keys() if \
+        int(word_dictionary[key]) < threshold or len(key) > 20]
     
     #remove typo words that repeat themselves of the form "wordcword"
     for key in dict(word_dictionary).keys():
@@ -138,7 +155,8 @@ def remove_too_uncommon(word_dictionary, threshold =20):
                 delete_word.append(key)
     
     #for key in delete_word: word_dictionary.pop(key)
-    word_return_dictionary = {word:value for (word,value) in word_dictionary.items() if word not in delete_word }
+    word_return_dictionary = {word:value for (word,value) in \
+        word_dictionary.items() if word not in delete_word }
 
 
     return word_return_dictionary
@@ -146,71 +164,73 @@ def remove_too_uncommon(word_dictionary, threshold =20):
 def determine_gamer_words(normal_dictionary,gamer_dictionary):
 
     """
-    
+    Determine words specific to a language set by comparing and finding words
+    that are used significantly more frequently by a community than the general
+    populace.
+
     Args:
-        gamer_dictionary: a dictionary with strings as keys and floats as the
-            values representing what percentage of the time that string gets 
-            used in the dataset
-        normal_dictionary: a dictionary with strings as keys and floats as the
-            values representing what percentage of the time that string gets 
-            used in the dataset
+        gamer_dictionary: A dictionary with strings as keys and floats as the
+            values representing what ratio of the time that string gets 
+            used in the dataset.
+        normal_dictionary: A dictionary with strings as keys and floats as the
+            values representing what ratio of the time that string gets 
+            used in the dataset.
     
     Returns:
-        gamer_words: a list of strings representing words specific to the
-        gamer vocabulary
+        gamer_words: A list of strings representing words specific to the
+            gamer vocabulary.
     """
+
     gamer_words = []
 
     for word in gamer_dictionary:
-        #determine a word to be a gamer word if it is used 50 times more
+        #Determine a word to be a gamer word if it is used 50 times more
         #frequently in gamer subreddits than normal subreddits
         if (word in normal_dictionary) and (normal_dictionary[word] <\
             gamer_dictionary[word]/8):
             gamer_words.append(word)
-        #if the word is not present in the normal dictionary, then use a simple
+        #If the word is not present in the normal dictionary, then use a simple
         #percentage of uses comparison to determine if the word is used
         #frequently enough to be determined a gamer word
-        elif (word not in normal_dictionary) and (gamer_dictionary[word] > .000079):
+        elif (word not in normal_dictionary) and (gamer_dictionary[word] >\
+             .000079):
             gamer_words.append(word)
     return gamer_words
-
-
 
 def parse_words(normal_dictionary, gamer_dictionary, threshold):
     """
     Parse through a dictionary of words and their frequencies in "gamer" and
     "normal" subreddits to find meaningfully different language patterns
-    between the two word sets
+    between the two word sets.
 
     Returns:
-        gamer_dictionary: a dictionary with strings as keys and floats as the
-            values representing what percentage of the time that string gets 
-            used in the dataset
-        normal_dictionary: a dictionary with strings as keys and floats as the
-            values representing what percentage of the time that string gets 
-            used in the dataset
-        gamer_words:
-            a list of strings representing words determined to be meaningfully 
-            distinct to the gamer vocabulary
+        working_normal_dictionary: a dictionary with strings as keys and floats
+            as the values representing what ratio of the time that string gets 
+            used in the normal dataset.
+        working_gamer_dictionary: a dictionary with strings as keys and floats
+            as the values representing what ratio of the time that string gets 
+            used in the gamer dataset.
+        gamer_words: a list of strings representing words determined to be 
+            meaningfully distinct to the gamer vocabulary.
     
     """
-    #print(len(gamer_dictionary))
+    #Curate dictionary sets for word usages
     working_gamer_dictionary = remove_too_uncommon(gamer_dictionary,threshold)
     working_normal_dictionary = remove_too_uncommon(normal_dictionary,threshold)
-    #print(len(gamer_dictionary))
-    #curate the dictionary sets
-    working_normal_dictionary, normal_total_words = instances_to_decimal(working_normal_dictionary)
-    working_gamer_dictionary, gamer_total_words = instances_to_decimal(working_gamer_dictionary)
-
-    working_normal_dictionary, working_gamer_dictionary, ignore_list = remove_most_common(working_normal_dictionary\
+    #Change from a word frequency list to a ratio of the amount of times that
+    #word is used
+    working_normal_dictionary, normal_total_words = \
+        instances_to_decimal(working_normal_dictionary)
+    working_gamer_dictionary, gamer_total_words = \
+        instances_to_decimal(working_gamer_dictionary)
+    #Curate dictionaries by comparing them to each other
+    working_normal_dictionary, working_gamer_dictionary, ignore_list = \
+        remove_most_common(working_normal_dictionary\
         , working_gamer_dictionary, normal_total_words, gamer_total_words)
-    #print(len(gamer_dictionary))
 
-    #determine gamer words
-    gamer_words = determine_gamer_words(working_normal_dictionary,working_gamer_dictionary)
-
-    # Convert from closeness to z scores
-    
+    #Determine gamer words
+    gamer_words = determine_gamer_words(working_normal_dictionary,\
+        working_gamer_dictionary)
 
     return working_normal_dictionary, working_gamer_dictionary, gamer_words, \
         ignore_list
@@ -221,19 +241,28 @@ def determine_language_similarity(word_dictionary, user_dictionary):
 
     """
     Determine how similar a user's vocabulary is to a certain curated language
-    set
+    set with lower numbers determining closer similarities in language. 
+    
+    If every word that a user types is considered a dimension in vector
+    space, then one can construct a vector for a user's dataset and a vector
+    for the community language dataset by setting the magnitude of each vector
+    component as the ratio of times a certain word is used total in the user and
+    community language dataset respectively. One can then quantify how close
+    these two language datasets are to each other by subtracting these two
+    vectors and finding the magnitude of the resultant vector.
 
     Args:
-        word_dictionary: a dictionary with strings as keys and floats as values
-        representing how frequently a word is used in a set of words
-        user_dictionary: a dictionary with strings as keys and floats as values
-        representing how frequently a word is used in a set of words
-    Returns:
-        a float representing how close a user's total language usage is to a
-        given set of data with lower numbers being closer
+        word_dictionary: A dictionary with strings as keys and floats
+            as the values representing what ratio of the time that string gets 
+            used in a language dataset.
+        user_dictionary: A dictionary with strings as keys and floats
+            as the values representing what ratio of the time that string gets 
+            used in a user's personal language dataset.
+    Returns: A float representing how close a user's total language usage is to 
+        a given set of data with lower numbers being closer.
     """
     difference_list = []
-    #we specifically iterate through the user's list of used words because this
+    #We specifically iterate through the user's list of used words because this
     #list will be smaller by necessity than the words used by the entire
     #dataset of users in a subreddit. It would therefore be unfair to judge
     #closeness of a user's language used by the amount of words that they do
@@ -247,33 +276,66 @@ def determine_language_similarity(word_dictionary, user_dictionary):
     
     return math.sqrt(sum(difference_list))
 
-def analyze_users_language(normal_dictionary, gamer_dictionary, gamer_words, ignore_list, folder_path):
+def analyze_users_language(normal_dictionary, gamer_dictionary, gamer_words,\
+     ignore_list, folder_path):
     """
-    Analyze a user's language similarity to a dictionary
+    Analyze a set of several user's language usage data, stored in
+    a folder as csv's, similarity to a normal and gamer language set and output
+    the result.
     
+    Args:
+        normal_dictionary: A curated dictionary with strings as keys and floats
+            as the values representing the number of the time that string gets 
+            used in the normal dataset.
+        gamer_dictionary: A curated dictionary with strings as keys and floats
+            as the values representing what ratio of the time that string gets 
+            used in the gamer dataset.
+        gamer_words: A list of strings representing words used much more
+            commonly by gamers than non gamers.
+        ignore_list: A list of strings representing words to remove from a
+            user's language set
+        folder_path: A string representing the relative path of the folder that
+            all of the user data csv's are in.
+
     Returns:
-        dictionary -> key is filepath,values is list [normal closeness val, gamer closeness val, ratio of gamer words used to all words]
+        user_value_dictionary: A dictionary with a string representing the
+            relative file path of a user's language usage data as a key and a
+            list of integers as the value. The list value is of the form:
+            [normal_closeness, gamer_closeness, ratio_gamer_words_used]
+        normal_closeness: An integer representing how close a user's language
+            usage is to the normal dataset.
+        gamer_closeness: An integer representing how close a user's language
+            usage is to the gamer dataset.
+        ratio_gamer_wordS_used: An integer representing the ratio of gamer words
+            used by a user out of all of the words they use.
+
+
     """
+    #Create a list of user csv file paths
     file_list = os.listdir(folder_path)
 
     file_list = [folder_path +"/" + user for user in file_list]
 
-    #print(file_list)
 
     user_value_dict = {}
     swap_list = []
+    #Iterate through users
     for user in file_list:
 
         swap_list = []
+        #Create a dictionary from the user csv
         user_dictionary = csv_to_dict(user)
         
-        #remove non useful user data
+        # Remove non useful user data
         user_dictionary = remove_too_uncommon(user_dictionary,1)
-        user_dictionary = {word:value for (word,value) in user_dictionary.items() if word not in ignore_list}
-        user_dictionary, total_user_words = instances_to_decimal(user_dictionary)
+        user_dictionary = {word:value for (word,value) in \
+            user_dictionary.items() if word not in ignore_list}
 
-        #print(user_dictionary)
-        #print(type(user_dictionary))
+        #Make the values of the user dictionary a ratio
+        user_dictionary, _ = instances_to_decimal(user_dictionary)
+
+        #append to the user's output list their closeness values for the
+        #normal language set and gamer language set in that order
         swap_list.append(determine_language_similarity(normal_dictionary,user_dictionary))
         swap_list.append(determine_language_similarity(gamer_dictionary,user_dictionary))
         
@@ -283,6 +345,7 @@ def analyze_users_language(normal_dictionary, gamer_dictionary, gamer_words, ign
             if word in user_dictionary.keys():
                 ratio_gamer_words_used += user_dictionary[word]
         ratio_gamer_words_used = ratio_gamer_words_used/sum(user_dictionary.values())
+        #append to a user's ouput list the ratio of gamer words they use
         swap_list.append(ratio_gamer_words_used)
 
         user_value_dict[user] = swap_list
@@ -364,7 +427,7 @@ def find_most_frequent_gamer_words(user_dict, gamer_words, num_items):
             user_gamer_words[word] = user_dict[word]
     
     return find_most_frequent(user_gamer_words, num_items)
-    
+
 def determine_gamer_words_frequency(normal_dictionary, gamer_dictionary):
     gamer_words = {}
     
