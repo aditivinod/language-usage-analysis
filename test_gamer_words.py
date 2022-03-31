@@ -129,40 +129,12 @@ is_gamer_cases = [
 ]
 
 
-# # Define additional testing lists and functions that check other properties of
-# # functions in gene_finder.py.
-# @pytest.mark.parametrize("nucleotide", ["A", "T", "C", "G"])
-# def test_double_complement(nucleotide):
-#     """
-#     Check that taking the complement of a complement of a nucleotide produces
-#     the original nucleotide.
-
-#     Args:
-#         nucleotide: A single-character string representing one of the four DNA
-#             nucleotides.
-#     """
-#     assert get_complement(get_complement(nucleotide)) == nucleotide
-
-
-
-
 # Define standard testing functions to check functions' outputs given certain
 # inputs defined above.
 @pytest.mark.parametrize("freq_input_dict,freq_input_int,output_dict", find_most_frequent_cases)
 def test_find_most_frequent(freq_input_dict, freq_input_int, output_dict):
     """
-    Test that each nucleotide is mapped to its correct complement.
-
-    Given a single-character string representing a nucleotide that is "A", "T",
-    "G", or "C", check that the get_complement function correctly maps the
-    string to a single-character string representing the nucleotide's complement
-    (also "A", "T", "G", or "C").
-
-    Args:
-        nucleotide: A single-character string equal to "A", "C", "T", or "G"
-            representing a nucleotide.
-        complement: A single-character string equal to "A", "C", "T", or "G"
-            representing the expected complement of nucleotide.
+    
     """
     assert find_most_frequent(freq_input_dict, freq_input_int) == output_dict
 
@@ -171,18 +143,8 @@ def test_find_most_frequent(freq_input_dict, freq_input_int, output_dict):
                          instances_to_decimal_cases)
 def test_instances_to_decimal(input_dictionary, output_dictionary,total_words):
     """
-    Test that a string of nucleotides get mapped to its reverse complement.
+    
 
-    Check that given a string consisting of "A", "C", "T", and "G" that
-    represents a strand of DNA, the get_reverse_complement function correctly
-    returns the reverse complement of the string, defined as the complement of
-    each nucleotide in the strand in reverse order.
-
-    Args:
-        strand: A string consisting only of the characters "A", "C", "T", and
-            "G" representing a strand of DNA.
-        reverse_complement: A string representing the expected reverse
-            complement of strand.
     """
     assert instances_to_decimal(input_dictionary) == (output_dictionary,total_words)
 
@@ -192,28 +154,15 @@ gamer_dict_out,ignore_list_out", remove_most_common_cases)
 def test_remove_most_common(normal_dictionary, gamer_dictionary,normal_total_words,gamer_total_words,normal_dict_out,\
     gamer_dict_out,ignore_list_out):
     """
-#     """
+
+     """
     assert remove_most_common(normal_dictionary, gamer_dictionary,normal_total_words,gamer_total_words) == \
         (normal_dict_out,gamer_dict_out,ignore_list_out)
 
 @pytest.mark.parametrize("dictionary,threshold,dictionary_out", remove_too_uncommon_cases)
 def test_remove_too_uncommon(dictionary,threshold,dictionary_out ):
     """
-    Test that a string representing a strand of DNA gets mapped to a list of all
-    non-overlapping open reading frames (ORFs) aligned to its frame.
-
-    Check that given a string representing a strand of DNA as defined above, the
-    find_all_orfs_oneframe function returns a list of strings representing all
-    non-overlapping ORFs in the strand that are aligned to the strand's frame
-    (i.e., starting a multiple of 3 nucleotides from the start of the strand).
-    Each ORF is a strand of DNA from a START codon to a STOP codon (or in the
-    case of the last ORF in the strand, to the end of the strand if no STOP
-    codon is encountered during reading).
-
-    Args:
-        strand: A string representing a strand of DNA.
-        orfs: A list of strings representing the expected strands of DNA that
-            are ORFs within strand's frame.
+    
     """
     assert remove_too_uncommon(dictionary,threshold) == dictionary_out
 
@@ -221,21 +170,7 @@ def test_remove_too_uncommon(dictionary,threshold,dictionary_out ):
 @pytest.mark.parametrize("normal_dictionary,gamer_dictionary,word_list", determine_gamer_words_cases)
 def test_determine_gamer_words(normal_dictionary, gamer_dictionary,word_list):
     """
-    Test that a string representing a strand of DNA gets mapped to a list of all
-    open reading frames within the strand, with no overlapping ORFs within any
-    given frame of the strand.
-
-    Check that given a string representing a strand of DNA as defined above, the
-    find_all_orfs function returns a list of strings representing all ORFs in
-    the strand as defined above. Overlapping ORFs are allowed as long as they do
-    not occur in different frames (i.e., each ORF is only non-overlapping with
-    the other ORFs in its own frame).
-
-    Args:
-        strand: A string representing a strand of DNA.
-        orfs: A list of strings representing the expected strands of DNA that
-            are ORFs within strand, with no overlapping ORFs within one frame of
-            strand.
+    
     """
     assert determine_gamer_words(normal_dictionary,gamer_dictionary) == word_list
 
@@ -243,19 +178,7 @@ def test_determine_gamer_words(normal_dictionary, gamer_dictionary,word_list):
 @pytest.mark.parametrize("language_dict,user_dict,closeness_value", determine_language_similarity_cases)
 def test_determine_language_similarity(language_dict, user_dict,closeness_value):
     """
-    Test that a string representing a strand of DNA gets mapped to a list of
-    all open reading frames within the strand or its reverse complement, with no
-    overlapping ORFs within a given frame.
-
-    Check that given a string representing a strand of DNA as defined above, the
-    find_all_orfs_both_strands function returns a list of strings representing
-    all ORFs in the strand or its reverse complement as defined above.
-
-    Args:
-        strand: A string representing a strand of DNA.
-        orfs: A list of strings representing the expected strands of DNA that
-            are ORFs within strand or its reverse complement, with no
-            overlapping ORFs within one frame of either.
+    
     """
     assert determine_language_similarity(language_dict,user_dict) == closeness_value
 
@@ -263,35 +186,8 @@ def test_determine_language_similarity(language_dict, user_dict,closeness_value)
 @pytest.mark.parametrize("strand,orf", is_gamer_cases)
 def test_is_gamer(strand, orf):
     """
-    Test that a string representing a strand of DNA gets mapped to a string
-    representing the longest ORF within the strand or its reverse complement.
+    
 
-    Check that given a string representing a strand of DNA as defined above, the
-    find_longest_orf function returns a string representing a strand of DNA
-    equal to the longest ORF within the strand or its reverse complement.
-
-    Args:
-        strand: A string representing a strand of DNA.
-        orf: A string representing a strand of DNA equal to the expected longest
-            ORF in strand or its reverse complement.
     """
     assert is_gamer(strand) == orf
 
-
-# @pytest.mark.parametrize("strand,protein", encode_amino_acids_cases)
-# def test_encode_amino_acids(strand, protein):
-#     """
-#     Test that a string representing a strand of DNA gets mapped to a string
-#     representing the amino acids encoded by the strand.
-
-#     Check that given a string representing a strand of DNA as defined above, the
-#     encode_amino_acids function returns a string consisting of one-letter IUPAC
-#     amino acid codes corresponding to the sequence amino acids encoded by the
-#     strand.
-
-#     Args:
-#         strand: A string representing a strand of DNA.
-#         protein: A string representing the expected sequence one-letter IUPAC
-#             amino acid codes encoded by strand.
-#     """
-#     assert encode_amino_acids(strand) == protein
