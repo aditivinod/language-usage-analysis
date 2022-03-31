@@ -132,8 +132,11 @@ determine_language_similarity_cases = [
 # has allowed us to be confident that it works.
 
 # stats_and_z_info is required to run through a folder full of CSV's to test;
-# since that would be too difficult to simulate, testing on the components
-# alone should be more than enough to ensure that the function works.
+# since that would be too difficult to simulate. Furthermore, the way
+# that the 3 return values for this function are created also makes it very
+# very difficult to split it into sub functions. We validated that the data
+# we created functioned as we hoped by ensuring that the center of the Z
+# score distributions were 0 as expected.
 
 is_gamer_cases = [
     # Check that a negative gamer value and a positive normal value returns
