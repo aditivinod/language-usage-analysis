@@ -9,6 +9,7 @@ from operator import itemgetter
 import math
 import os
 from types import WrapperDescriptorType
+import numpy as np
 
 from sympy import true
 from scrape_data import csv_to_dict
@@ -208,6 +209,9 @@ def parse_words(normal_dictionary, gamer_dictionary, threshold):
     #determine gamer words
     gamer_words = determine_gamer_words(working_normal_dictionary,working_gamer_dictionary)
 
+    # Convert from closeness to z scores
+    
+
     return working_normal_dictionary, working_gamer_dictionary, gamer_words, \
         ignore_list
 
@@ -291,6 +295,8 @@ Do the documentation, bitch.
 def stats_lists(stats_dict, folder_path):
     file_list = get_file_list(folder_path)
 
+    # stats_dict is the output of analyze_users_language
+
     normal_closeness = []
     gamer_closeness = []
     gamer_all_ratio = []
@@ -302,14 +308,36 @@ def stats_lists(stats_dict, folder_path):
     
     return [normal_closeness, gamer_closeness, gamer_all_ratio]
 
+def stats_to_z_score(normal_closeness, gamer_closeness, stats_dict, folder_path):
+    means_stds = all_closeness_values(stats_dict, folder_path)
+    
+    z_normal = closeness_to_z_score(normal_closeness, means_stds[0], means_stds[1])
+    print(z_normal)
+    z_gamer = closeness_to_z_score(gamer_closeness, means_stds[2], means_stds[3])
+
+    return z_normal, z_gamer
+
+def all_closeness_values(stats_dict, folder_path):
+    stats = stats_lists(stats_dict, folder_path)
+    mean_normal = sum(stats[0])/len(stats[0])
+    std_normal = np.std(stats[0])
+
+    mean_gamer = sum(stats[1])/len(stats[1])
+    std_gamer = np.std(stats[1])
+    return mean_normal, std_normal, mean_gamer, std_gamer
+
+
 """
 Do the documentation, bitch.
 """
-def is_gamer(gamer_freq, normal_freq):
-    threshold = (gamer_freq+normal_freq)/2
-    if gamer_freq > threshold: 
+def is_gamer(gamer_z, normal_z):
+    if gamer_z < 0:
         return True
     return False
+    #threshold = (gamer_freq+normal_freq)/2
+    #if gamer_freq > threshold: 
+    #    return True
+    #return False
 
 """
 Do the documentation, bitch.
@@ -318,6 +346,13 @@ def get_file_list(folder_path):
     file_list = os.listdir(folder_path)
     file_list = [folder_path +"/" + user for user in file_list]
     return file_list
+
+def closeness_to_z_score(stats_list, mean, st_dev):
+    z_list = []
+    #values = list(stat_dict.values())
+    for stat in stats_list:
+        z_list.append((stat-mean)/st_dev)
+    return z_list
 
 """
 Do the documentation, bitch.

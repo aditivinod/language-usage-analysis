@@ -91,11 +91,11 @@ def single_histogram(data_list, num_bins, x_label, plt_title):
     plt.xlabel(x_label)
     plt.title(plt_title)
 
-def stacked_histogram(data_list, num_bins, label_1, label_2, label_3, plt_title):
+def stacked_histogram(data_list, num_bins, label_1, label_2, x_axis, plt_title):
     plt.hist(data_list[0], num_bins, alpha=0.33, label=label_1)
     plt.hist(data_list[1], num_bins, alpha=0.33, label=label_2)
-    plt.hist(data_list[2], num_bins, alpha=0.33, label=label_3)
     plt.legend(loc='upper right')
+    plt.xlabel(x_axis)
     plt.ylabel("Frequency")
     #plt.xlabel("Stats")
     plt.title(plt_title)
