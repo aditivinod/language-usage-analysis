@@ -1,4 +1,4 @@
-#take a dictionary of words and their relative frequency and parse through the
+# Take a dictionary of words and their relative frequency and parse through the
 #data to find specific "gamer words"
 
 from operator import itemgetter
@@ -24,7 +24,6 @@ def find_most_frequent(word_dictionary, number_items):
         most_frequent_dictionary: A value ordered dictionary with strings as
             keys and integers as values.
     """
-
     most_frequent_dictionary = dict(sorted(word_dictionary.items(), key = \
         itemgetter(1), reverse = True)[:number_items])
     
@@ -48,7 +47,7 @@ def instances_to_decimal(dictionary):
     """
     return_dict = {}
     total_words = sum(dictionary.values())
-    #avoids 0 division error
+    # Avoids 0 division error
     if total_words <= 0:
         return return_dict, total_words
     for word in dictionary:
@@ -72,7 +71,6 @@ def remove_most_common(normal_dictionary, gamer_dictionary,normal_total_words, \
             word uses in the normal dataset
         gamer_total_words: An integer representing the total instances of
             word uses in the gamer dataset
-    
     Returns:
         normal_return_dict = A dictionary with strings as keys representing
             words and floats as values representing what ratio of the time a 
@@ -84,22 +82,21 @@ def remove_most_common(normal_dictionary, gamer_dictionary,normal_total_words, \
             from both dictionaries.
         
     """
-    
     ignore_list = []
-    #create list of words to ignore
+    # Create list of words to ignore
     for word in normal_dictionary:
         if word in gamer_dictionary and normal_dictionary[word]*1.25 > \
             gamer_dictionary[word] > normal_dictionary[word]*.75:
 
             ignore_list.append(word)
     
-    #what to do if nothing is in the normal dictionary  
+    # What to do if nothing is in the normal dictionary  
     if normal_total_words == 0:
         normal_return_dict = {}
         gamer_return_dict = {word:value for (word,value) in \
             gamer_dictionary.items()}
         return normal_return_dict, gamer_return_dict, ignore_list
-    #what to do if nothing is in the gamer dictionary
+    # What to do if nothing is in the gamer dictionary
     elif gamer_total_words == 0:
         normal_return_dict = {word:value for (word,value) in \
             normal_dictionary.items()}
@@ -107,16 +104,16 @@ def remove_most_common(normal_dictionary, gamer_dictionary,normal_total_words, \
             gamer_dictionary.items()}
         return normal_return_dict, gamer_return_dict, ignore_list
 
-    #turn the decimal dictionaries into frequency dictionaries
+    # Turn the decimal dictionaries into frequency dictionaries
     normal_return_dict = {word:value*normal_total_words for (word,value) in\
          normal_dictionary.items() if word not in ignore_list}
     gamer_return_dict = {word:value*gamer_total_words for (word,value) in \
         gamer_dictionary.items() if word not in ignore_list}
     
-    #find the sum of all values in both frequency dictionaries
+    # Find the sum of all values in both frequency dictionaries
     new_gamer_total_words = sum(gamer_return_dict.values())
     new_normal_total_words = sum(normal_return_dict.values())
-    #divide the frequency dictionaries by the total values in each dictionary
+    # Divide the frequency dictionaries by the total values in each dictionary
     normal_return_dict = {word:value/new_normal_total_words for (word,value)\
          in normal_return_dict.items()}
     gamer_return_dict = {word:value/new_gamer_total_words for (word,value) \
@@ -140,21 +137,19 @@ def remove_too_uncommon(word_dictionary, threshold =20):
         word_return_dictionary: A dictionary with strings as keys representing 
             words and integers as values representing how many times that word
             is used in a dataset.
-
-    
     """
 
     delete_word = [key for key in dict(word_dictionary).keys() if \
         int(word_dictionary[key]) < threshold or len(key) > 20]
     
-    #remove typo words that repeat themselves of the form "wordcword"
+    # Remove typo words that repeat themselves of the form "wordcword"
     for key in dict(word_dictionary).keys():
         if key not in delete_word and "c" in key and (len(key) - 1) % 2 == 0:
             half_word = key[0:int((len(key)-1)/2)]
             if half_word in key[int(((len(key)-1)/2)+1):len(key)]:
                 delete_word.append(key)
     
-    #for key in delete_word: word_dictionary.pop(key)
+    # For key in delete_word: word_dictionary.pop(key)
     word_return_dictionary = {word:value for (word,value) in \
         word_dictionary.items() if word not in delete_word }
 
@@ -180,18 +175,17 @@ def determine_gamer_words(normal_dictionary,gamer_dictionary):
         gamer_words: A list of strings representing words specific to the
             gamer vocabulary.
     """
-
     gamer_words = []
 
     for word in gamer_dictionary:
-        #Determine a word to be a gamer word if it is used 50 times more
-        #frequently in gamer subreddits than normal subreddits
+        # Determine a word to be a gamer word if it is used 50 times more
+        # frequently in gamer subreddits than normal subreddits
         if (word in normal_dictionary) and (normal_dictionary[word] <\
             gamer_dictionary[word]/8):
             gamer_words.append(word)
-        #If the word is not present in the normal dictionary, then use a simple
-        #percentage of uses comparison to determine if the word is used
-        #frequently enough to be determined a gamer word
+        # If the word is not present in the normal dictionary, then use a simple
+        # percentage of uses comparison to determine if the word is used
+        # frequently enough to be determined a gamer word
         elif (word not in normal_dictionary) and (gamer_dictionary[word] >\
              .000079):
             gamer_words.append(word)
@@ -212,23 +206,22 @@ def parse_words(normal_dictionary, gamer_dictionary, threshold):
             used in the gamer dataset.
         gamer_words: a list of strings representing words determined to be 
             meaningfully distinct to the gamer vocabulary.
-    
     """
-    #Curate dictionary sets for word usages
+    # Curate dictionary sets for word usages
     working_gamer_dictionary = remove_too_uncommon(gamer_dictionary,threshold)
     working_normal_dictionary = remove_too_uncommon(normal_dictionary,threshold)
-    #Change from a word frequency list to a ratio of the amount of times that
-    #word is used
+    # Change from a word frequency list to a ratio of the amount of times that
+    # word is used
     working_normal_dictionary, normal_total_words = \
         instances_to_decimal(working_normal_dictionary)
     working_gamer_dictionary, gamer_total_words = \
         instances_to_decimal(working_gamer_dictionary)
-    #Curate dictionaries by comparing them to each other
+    # Curate dictionaries by comparing them to each other
     working_normal_dictionary, working_gamer_dictionary, ignore_list = \
         remove_most_common(working_normal_dictionary\
         , working_gamer_dictionary, normal_total_words, gamer_total_words)
 
-    #Determine gamer words
+    # Determine gamer words
     gamer_words = determine_gamer_words(working_normal_dictionary,\
         working_gamer_dictionary)
 
@@ -238,7 +231,6 @@ def parse_words(normal_dictionary, gamer_dictionary, threshold):
 
 
 def determine_language_similarity(word_dictionary, user_dictionary):
-
     """
     Determine how similar a user's vocabulary is to a certain curated language
     set with lower numbers determining closer similarities in language. 
@@ -258,15 +250,16 @@ def determine_language_similarity(word_dictionary, user_dictionary):
         user_dictionary: A dictionary with strings as keys and floats
             as the values representing what ratio of the time that string gets 
             used in a user's personal language dataset.
-    Returns: A float representing how close a user's total language usage is to 
-        a given set of data with lower numbers being closer.
+    Returns: 
+        A float representing how close a user's total language usage is to  a given
+            set of data with lower numbers being closer.
     """
     difference_list = []
-    #We specifically iterate through the user's list of used words because this
-    #list will be smaller by necessity than the words used by the entire
-    #dataset of users in a subreddit. It would therefore be unfair to judge
-    #closeness of a user's language used by the amount of words that they do
-    #not use that appear in a given dataset.
+    # We specifically iterate through the user's list of used words because this
+    # list will be smaller by necessity than the words used by the entire
+    # dataset of users in a subreddit. It would therefore be unfair to judge
+    # closeness of a user's language used by the amount of words that they do
+    # not use that appear in a given dataset.
     for word in user_dictionary:
         if word in word_dictionary:
             difference_list.append((user_dictionary[word] - word_dictionary\
@@ -296,7 +289,6 @@ def analyze_users_language(normal_dictionary, gamer_dictionary, gamer_words,\
             user's language set
         folder_path: A string representing the relative path of the folder that
             all of the user data csv's are in.
-
     Returns:
         user_value_dictionary: A dictionary with a string representing the
             relative file path of a user's language usage data as a key and a
@@ -308,22 +300,17 @@ def analyze_users_language(normal_dictionary, gamer_dictionary, gamer_words,\
             usage is to the gamer dataset.
         ratio_gamer_wordS_used: An integer representing the ratio of gamer words
             used by a user out of all of the words they use.
-
-
     """
-    #Create a list of user csv file paths
-    file_list = os.listdir(folder_path)
-
-    file_list = [folder_path +"/" + user for user in file_list]
-
+    # Create a list of user csv file paths
+    file_list = get_file_list(folder_path)
 
     user_value_dict = {}
     swap_list = []
-    #Iterate through users
+    # Iterate through users
     for user in file_list:
 
         swap_list = []
-        #Create a dictionary from the user csv
+        # Create a dictionary from the user csv
         user_dictionary = csv_to_dict(user)
         
         # Remove non useful user data
@@ -331,21 +318,21 @@ def analyze_users_language(normal_dictionary, gamer_dictionary, gamer_words,\
         user_dictionary = {word:value for (word,value) in \
             user_dictionary.items() if word not in ignore_list}
 
-        #Make the values of the user dictionary a ratio
+        # Make the values of the user dictionary a ratio
         user_dictionary, _ = instances_to_decimal(user_dictionary)
 
-        #append to the user's output list their closeness values for the
-        #normal language set and gamer language set in that order
+        # Append to the user's output list their closeness values for the
+        # Normal language set and gamer language set in that order
         swap_list.append(determine_language_similarity(normal_dictionary,user_dictionary))
         swap_list.append(determine_language_similarity(gamer_dictionary,user_dictionary))
         
-        #compute what ratio of words that a user uses are gamer words
+        # Compute what ratio of words that a user uses are gamer words
         ratio_gamer_words_used = 0
         for word in gamer_words:
             if word in user_dictionary.keys():
                 ratio_gamer_words_used += user_dictionary[word]
         ratio_gamer_words_used = ratio_gamer_words_used/sum(user_dictionary.values())
-        #append to a user's ouput list the ratio of gamer words they use
+        # Append to a user's ouput list the ratio of gamer words they use
         swap_list.append(ratio_gamer_words_used)
 
         user_value_dict[user] = swap_list
@@ -353,7 +340,30 @@ def analyze_users_language(normal_dictionary, gamer_dictionary, gamer_words,\
     return user_value_dict
 
 def stats_and_z_info(stats_dict, folder_path):
-    # stats dict is output of analyze users_language
+    """
+    Given a dictionary containing users and their respective analysis
+    statistics, generates the overall statsistics lists, and the z-score values
+    for each user.
+
+    Args:
+        stats_dict: A dictionary representing all of the testing users'
+            statistics. The keys are strings representing the user CSV file
+            paths and the values are a list containing the two closeness stats
+            and the gamer:all words ratio.
+        folder_path: A string representing the path to the folder containing
+            all of the test user CSVs.
+    Returns: 
+        stats: A list of three lists containing floats; each float list
+            contains the data for a singular statistic from the user analysis
+            for all of the users.
+        z_dict: A dictionary representing all of the testing users' z-scores
+            for closeness to the gamer and normal words. The keys are strings
+            representing the user CSV file paths and the values are lists 
+            containing one index per z-score.
+        z_list: A list containing two lists of floats, one per z-value, for all
+            of the testing users.
+    """
+    # Stats dict is output of analyze users_language
     file_list = get_file_list(folder_path)
 
     normal_closeness = []
@@ -390,19 +400,26 @@ def stats_and_z_info(stats_dict, folder_path):
     return stats, z_dict, z_lists
 
 """
-Do the documentation, bitch.
+Determines whether an individual user is considered a gamer or not.
+
+Args:
+    gamer_z: The individual user's z-score for closeness to the gamer words.
+    normal_z: The individual user's z-score for closeness to the normal words.
 """
 def is_gamer(gamer_z, normal_z):
     if gamer_z-normal_z < 0:
         return True
     return False
-    #threshold = (gamer_freq+normal_freq)/2
-    #if gamer_freq > threshold: 
-    #    return True
-    #return False
 
 """
-Do the documentation, bitch.
+Gets a list of all the files given a folder path.
+
+Args:
+    Folder path: A string representing a path to the folder containing the test
+        users' CSVs.
+Returns:
+    A list of strings representing the paths to each of the individual users'
+        CSV files.
 """
 def get_file_list(folder_path):
     file_list = os.listdir(folder_path)
@@ -410,7 +427,20 @@ def get_file_list(folder_path):
     return file_list
 
 """
-Do the documentation, bitch.
+Given a users' frequency dictionary and a number, determines the most frequent
+gamer words up to that number.
+
+Args: 
+    user_dict: A dictionary representing an individual user's word frequencies.
+        The keys are strings reprenting the words that the user has said and
+        the values are integers representing how many times the corresponding
+        key has been sent as a message by the user.
+    gamer_words: A list of strings representing the gamer words.
+    num_items: The number of gamer_words to output.
+Returns:
+    A dictionary representing the most frequent gamer words present in the
+    users' messages. The keys are strings representing the gamer words and
+    the values are numbers representing their corresponding frequencies.
 """
 def find_most_frequent_gamer_words(user_dict, gamer_words, num_items):
     user_gamer_words = {}
@@ -421,20 +451,73 @@ def find_most_frequent_gamer_words(user_dict, gamer_words, num_items):
     return find_most_frequent(user_gamer_words, num_items)
 
 def determine_gamer_words_frequency(normal_dictionary, gamer_dictionary):
+    """
+    Creates a frequency dictionary for the gamer words list.
+
+    Args:
+        normal_dictionary: A dictionary representing the normal words prior to
+            removal of overly common terms. The keys are strings representing
+            the words and the values are integers representing their
+            corresponding frequencies.
+        gamer_dictionary: A dictionary representing the gamer words prior to 
+            removal of overly common terms. The keys are strings representing
+            the words and the values are integers representing their
+            corresponding frequencies.
+    Returns:
+        A dictionary representing the gamer words. The keys are strings
+        representing the words and the values are integers representing 
+        their corresponding frequencies.
+    """
     gamer_words = {}
     
     for word in gamer_dictionary:
-        #determine a word to be a gamer word if it is used 50 times more
-        #frequently in gamer subreddits than normal subreddits
+        # Determine a word to be a gamer word if it is used 50 times more
+        # frequently in gamer subreddits than normal subreddits
         if word in normal_dictionary and normal_dictionary[word] <\
             gamer_dictionary[word]/8:
             gamer_words[word] = gamer_dictionary[word]
-        #if the word is not present in the normal dictionary, then use a simple
-        #percentage of uses comparison to determine if the word is used
-        #frequently enough to be determined a gamer word
+        # Ff the word is not present in the normal dictionary, then use a simple
+        # percentage of uses comparison to determine if the word is used
+        # frequently enough to be determined a gamer word
         elif (word not in normal_dictionary) and (gamer_dictionary[word] > .000079):
             gamer_words[word] = gamer_dictionary[word]
     return gamer_words
     
     
+def generate_user_id_dict(z_dict, user_stats_dict, gamer_words, folder_path):
+    """
+    Generates the info necessary to create the individual user ID cards.
 
+    Args:
+        z_dict: A dictionary representing the z-scores for each individual user.
+            The keys are strings representing the path to the users' data and
+            the values are a list containing two z-scores.
+        user_stats_dict: A dictionary representing the stats for each
+            individual user. The keys are strings representing the path to the
+            users' data and the values are a list containing the three primary
+            stats calculated for each user.
+        gamer_words: A list of strings represenging the gamer words.
+        folder_path: A string representing the path to the folder containing
+            all the individual users' data.
+    Returns:
+        user_id_dict: A dictionary representing the information that goes on
+            each individual users' ID card. The keys are strings representing
+            the path to the users' data and the values are a list containing 
+            the information necessary for the ID card.
+    """
+    user_id_dict = {}
+
+    file_list = get_file_list(folder_path)
+
+    for user in file_list:
+        username = str(user)[len(str(folder_path))+1:-4]
+        gamer_z = z_dict[user][1]
+        normal_z = z_dict[user][0]
+        gamer_status = is_gamer(gamer_z, normal_z)
+        gamer_all_freq = user_stats_dict[user][2]
+        top = list(find_most_frequent_gamer_words(csv_to_dict(user), gamer_words, 5).keys())
+
+        id_info = [username, gamer_status, gamer_z, normal_z, gamer_all_freq, top]
+        user_id_dict[user] = id_info
+    
+    return user_id_dict

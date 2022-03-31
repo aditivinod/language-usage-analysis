@@ -7,7 +7,7 @@ from api_keys import keys
 import pandas as pd
 
 """
-Creates an instance of a reddit 
+Creates a read-only instance of Reddit.
 """
 reddit = praw.Reddit(
     client_id = keys["CLIENT_ID"],
@@ -18,7 +18,13 @@ reddit = praw.Reddit(
 )
 
 """
-Do the docstring, bitch.
+Converts a given list of strings into a list of subreddit types.
+
+Args:
+    subreddit_strings: A list of strings representing the names of subreddits
+        to eventually collect data from.
+Returns:
+    A list of subreddit objects corresponding to the given names.
 """
 def strings_to_subreddits(subreddit_strings):
     subreddits = []
@@ -27,7 +33,17 @@ def strings_to_subreddits(subreddit_strings):
     return subreddits
 
 """
-Do the docstring, bitch.
+Scrapes the top submissions of a given list of subreddits for a given number
+of posts.
+
+Args:
+    subreddit_strings: A list of strings representing the names of subreddits
+        to collect data form.
+    num_posts: The number of submissions to go through on each subreddit.
+Returns:
+    A dictionary containing every word present in the subreddit's submissions,
+        excluding capitalization and punctuation, and the number of times that
+        word shows up.
 """
 def scrape_subreddits(subreddit_strings, num_posts):
     subreddits = strings_to_subreddits(subreddit_strings)
@@ -36,16 +52,21 @@ def scrape_subreddits(subreddit_strings, num_posts):
     for subreddit in subreddits:
         for submission in subreddit.top(limit=num_posts):
             words += submission.selftext.lower().translate(str.maketrans('', '', punctuation))
-            # submission.comments.replace_more(limit=None)
-            # for comment in submission.comments:
-                # words += comment.body.lower().translate(str.maketrans('', '', punctuation))
     words = words.split()
 
     word_dict = (Counter(words))
     return word_dict
 
 """
-Do the docstring, bitch.
+Given a file name, converts a CSV to a dictionary.
+
+Assumes that the CSV being converted is a frequency dictionary and as a result,
+casts all of the values to integers.
+
+Args:
+    file_name: The path for the CSV file to convert to a dictionary.
+Returns:
+    None.
 """
 def csv_to_dict(file_name):
     with open(file_name) as csv_file:
@@ -56,28 +77,17 @@ def csv_to_dict(file_name):
     return word_dict
 
 """
-Do the docstring, bitch.
+Given a dictionary and a file name, creates a new CSV containing the contents
+of the dictionary.
+
+Args:
+    word_dict: A dicitonary to be converted into a CSV.
+    file_name: The path for the CSV file the dictionary is being converted
+        into.
+Return:
+    None.
 """
 def dict_to_csv(word_dict, file_name):
     with open(file_name, 'w') as f:
         for key in word_dict.keys():
             f.write("%s,%s\n" % (key, word_dict[key]))
-
-"""
-Do the docstring, bitch.
-"""
-def scrape_user(username): # dysfunctional rn
-    #username = reddit.subreddit("r/u_" + username)
-    print("F")
-    redditor = reddit.redditor(username)
-
-    words = ""
-    for submission in redditor.submissions.new(limit=None):
-        words += submission.selftext.lower().translate(str.maketrans('', '', punctuation))
-    # submission.comments.replace_more(limit=None)
-    # for comment in submission.comments.list():
-            # words += comment.body.lower().translate(str.maketrans('', '', punctuation))
-    words = words.split()
-
-    word_dict = (Counter(words))
-    return word_dict

@@ -24,7 +24,7 @@ def word_cloud(frequency_dict):
 
 
 def create_profile_image(name, gamer_or_not, gamer_z_score, normal_z_score, \
-    gamer_all_freq, most_used):
+    gamer_all_freq, most_used, save_path):
     """
     Creates an 'id card' representing an individual users' gamer sub-internet
     analysis results. 
@@ -39,11 +39,12 @@ def create_profile_image(name, gamer_or_not, gamer_z_score, normal_z_score, \
             in an individual's messages.
         most_used: A list of strings containing the top five most used gamer words
             by an individual.
+        save_path: A string representing a path to save the ID card images to.
     Returns:
         None
     """
     imarray = np.random.rand(4,4,3) * 255
-    pfp_img = Image.fromarray(imarray.astype('uint8')).convert('RGBA')
+    pfp_img = Image.fromarray(imarray.astype("uint8")).convert("RGBA")
     pfp_img = pfp_img.resize((165, 165))
     
     # Text contents
@@ -55,7 +56,7 @@ def create_profile_image(name, gamer_or_not, gamer_z_score, normal_z_score, \
     gamer_z = "Gamer Z-Score - " + str(round((gamer_z_score), 4))
     normal_z = "Normal Z-Score - " + str(round((normal_z_score), 4))
     gamer_to_all = "Gamer:All Words Ratio - " + str(round(gamer_all_freq, 4))
-    top_words = "Most common gamer words - \n"+', '.join([str(elem) for elem \
+    top_words = "Most common gamer words - \n"+", ".join([str(elem) for elem \
         in most_used])
 
     # Font settings
@@ -89,7 +90,7 @@ def create_profile_image(name, gamer_or_not, gamer_z_score, normal_z_score, \
     draw.text((195, 120), gamer_to_all, font=frequency_font, fill=(0, 0, 0))
     draw.text((190, 150), top_words, font=common_words_font, fill=(0, 0, 0))
 
-    img.show()
+    img.save(f"{save_path}/{username}.png")
 
 def single_histogram(data_list, num_bins, x_label, plt_title):
     """
