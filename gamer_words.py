@@ -169,13 +169,12 @@ def determine_gamer_words(normal_dictionary,gamer_dictionary):
     populace.
 
     Args:
-        gamer_dictionary: A dictionary with strings as keys and floats as the
-            values representing what ratio of the time that string gets 
-            used in the dataset.
         normal_dictionary: A dictionary with strings as keys and floats as the
             values representing what ratio of the time that string gets 
             used in the dataset.
-    
+        gamer_dictionary: A dictionary with strings as keys and floats as the
+            values representing what ratio of the time that string gets 
+            used in the dataset.
     Returns:
         gamer_words: A list of strings representing words specific to the
             gamer vocabulary.

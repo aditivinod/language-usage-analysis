@@ -134,7 +134,15 @@ is_gamer_cases = [
 @pytest.mark.parametrize("freq_input_dict,freq_input_int,output_dict", find_most_frequent_cases)
 def test_find_most_frequent(freq_input_dict, freq_input_int, output_dict):
     """
-    
+    Check that find_most_frequent outputs correctly ordered dictionaries
+
+    Args:
+        freq_input_dict: A dictionary with strings as keys and positive
+            integers as values.
+        freq_input_int: An integer determining how many value ordered items to
+            output.
+        output_dict: A value ordered dictionary with strings as
+            keys and integers as values.
     """
     assert find_most_frequent(freq_input_dict, freq_input_int) == output_dict
 
@@ -143,7 +151,17 @@ def test_find_most_frequent(freq_input_dict, freq_input_int, output_dict):
                          instances_to_decimal_cases)
 def test_instances_to_decimal(input_dictionary, output_dictionary,total_words):
     """
-    
+    Test that the instance_to_decimal function properly converts from integers
+    to floats.
+
+    Args:
+        input_dictionary: A dictionary with strings as keys and positive 
+            integers as values.
+        output_dictionary: A dictionary with strings as keys and floats as
+            values.
+        total_words: An integer that is the sum of the values in the input
+            dictionary representing the total number of words used is a language
+            set.
 
     """
     assert instances_to_decimal(input_dictionary) == (output_dictionary,total_words)
@@ -154,15 +172,49 @@ gamer_dict_out,ignore_list_out", remove_most_common_cases)
 def test_remove_most_common(normal_dictionary, gamer_dictionary,normal_total_words,gamer_total_words,normal_dict_out,\
     gamer_dict_out,ignore_list_out):
     """
+    Test that the remove_most_common function removes the words that it should
+    be removing.
 
-     """
+    Args:
+        normal_dictionary = A dictionary with strings as keys representing words 
+            and floats as values representing what ratio of the time a word gets
+            used in the normal dataset
+        gamer_dictionary = A dictionary with strings as keys representing words 
+            and floats as values representing what ratio of the time a word gets
+            used in the gamer dataset
+        normal_total_words: An integer representing the total instances of
+            word uses in the normal dataset
+        gamer_total_words: An integer representing the total instances of
+            word uses in the gamer dataset
+        normal_dict_out = A dictionary with strings as keys representing
+            words and floats as values representing what ratio of the time a 
+            word gets used in the normal dataset.
+        gamer_dict_out = A dictionary with strings as keys representing words 
+            and floats as values representing what ratio of the time a word gets
+            used in the gamer dataset.
+        ignore_list_out = A list of strings containing words which were omitted
+            from both dictionaries.
+
+    """
     assert remove_most_common(normal_dictionary, gamer_dictionary,normal_total_words,gamer_total_words) == \
         (normal_dict_out,gamer_dict_out,ignore_list_out)
 
 @pytest.mark.parametrize("dictionary,threshold,dictionary_out", remove_too_uncommon_cases)
-def test_remove_too_uncommon(dictionary,threshold,dictionary_out ):
+def test_remove_too_uncommon(dictionary,threshold,dictionary_out):
     """
-    
+
+    Test that remove_too_uncommon removes typos, overly long strings, and words
+    that do not show up frequently as it should be.
+
+    Args:
+        dictionary: A dictionary with strings as keys representing words 
+            and integers as values representing how many times that word
+            is used in a dataset.
+        threshold: An integer determining the minimum number of usages for a 
+            word to be considered in the dictionary.
+        dictionary_out: A dictionary with strings as keys representing 
+            words and integers as values representing how many times that word
+            is used in a dataset.
     """
     assert remove_too_uncommon(dictionary,threshold) == dictionary_out
 
@@ -170,6 +222,18 @@ def test_remove_too_uncommon(dictionary,threshold,dictionary_out ):
 @pytest.mark.parametrize("normal_dictionary,gamer_dictionary,word_list", determine_gamer_words_cases)
 def test_determine_gamer_words(normal_dictionary, gamer_dictionary,word_list):
     """
+    Test that the determine_gamer_words() function properly finds language
+    very commonly used by gamers.
+
+    Args:
+        normal_dictionary: A dictionary with strings as keys and floats as the
+            values representing what ratio of the time that string gets 
+            used in the dataset.
+        gamer_dictionary: A dictionary with strings as keys and floats as the
+            values representing what ratio of the time that string gets 
+            used in the dataset.
+        word_list: A list of strings representing words specific to the
+            gamer vocabulary.
     
     """
     assert determine_gamer_words(normal_dictionary,gamer_dictionary) == word_list
@@ -178,7 +242,18 @@ def test_determine_gamer_words(normal_dictionary, gamer_dictionary,word_list):
 @pytest.mark.parametrize("language_dict,user_dict,closeness_value", determine_language_similarity_cases)
 def test_determine_language_similarity(language_dict, user_dict,closeness_value):
     """
-    
+    Test that the determine_language_similarity() function properly determines
+    closeness values between user and community language datasets.
+
+    Args:
+        language_dict: A dictionary with strings as keys and floats
+            as the values representing what ratio of the time that string gets 
+            used in a language dataset.
+        user_dict: A dictionary with strings as keys and floats
+            as the values representing what ratio of the time that string gets 
+            used in a user's personal language dataset.
+        closeness_value: A float representing how close a user's total language 
+            usage is to a given set of data with lower numbers being closer.
     """
     assert determine_language_similarity(language_dict,user_dict) == closeness_value
 
